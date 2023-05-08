@@ -10,7 +10,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.rainman.data.remote.response.PostResponse
 
-internal interface PostApi {
+interface PostApi {
 
     @GET("posts")
     suspend fun getAll() : Response<List<PostResponse>>

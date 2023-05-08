@@ -9,7 +9,7 @@ import retrofit2.http.Path
 import ru.rainman.data.remote.response.JobResponse
 import ru.rainman.domain.model.Job
 
-internal interface JobApi {
+interface JobApi {
 
     @GET("my/jobs")
     suspend fun getAll() : Response<List<JobResponse>>

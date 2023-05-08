@@ -6,7 +6,7 @@ import ru.rainman.domain.model.Coordinates
 
 
 @Entity(tableName = "posts")
-internal data class PostEntity(
+data class PostEntity(
     @PrimaryKey
     @ColumnInfo(name = "post_id")
     val postId: Long,

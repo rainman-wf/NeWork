@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:checkable="true"
+        android:id="@+id/selected_filter"
+        android:title="TODO"
+        android:icon="@drawable/filter"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/select_all"
+                android:title="All"
+                />
+            <item
+                android:id="@+id/select_selected"
+                android:title="Selected"
+                />
+            <item
+                android:id="@+id/select_unselected"
+                android:title="Unselected"
+                />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/select_users_favorite"
+        android:title="@string/favorite"
+        app:showAsAction="always"
+        android:icon="@drawable/favorite_selectable"/>
+</menu>

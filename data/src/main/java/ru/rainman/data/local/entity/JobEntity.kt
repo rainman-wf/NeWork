@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-internal data class JobEntity(
+data class JobEntity(
     @PrimaryKey
     val id: Long,
     @ColumnInfo(name = "employee_id")

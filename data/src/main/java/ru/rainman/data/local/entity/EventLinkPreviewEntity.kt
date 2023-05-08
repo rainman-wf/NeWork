@@ -14,7 +14,7 @@ import ru.rainman.domain.model.LinkPreview
         )
     ]
 )
-internal data class EventLinkPreviewEntity(
+data class EventLinkPreviewEntity(
     @PrimaryKey
     @ColumnInfo(name = "event_id")
     override val publicationId: Long,

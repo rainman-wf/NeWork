@@ -10,7 +10,7 @@ import retrofit2.http.Query
 import ru.rainman.data.remote.request.EventCreateRequest
 import ru.rainman.data.remote.response.EventResponse
 
-internal interface EventApi {
+interface EventApi {
 
     @GET("events")
     suspend fun getAll() : Response<List<EventResponse>>

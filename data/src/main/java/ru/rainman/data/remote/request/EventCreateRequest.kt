@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import ru.rainman.data.remote.response.Attachment
 import ru.rainman.data.remote.response.Coordinates
 
-internal data class EventCreateRequest(
+data class EventCreateRequest(
     val id: Int,
     val content: String?,
     val dateTime: String?,

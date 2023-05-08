@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-internal data class WallRemoteKeyEntity(
+data class WallRemoteKeyEntity(
     @PrimaryKey
     @ColumnInfo(name = "user_id")
     val userId: Long,

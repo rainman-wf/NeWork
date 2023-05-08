@@ -2,7 +2,7 @@ package ru.rainman.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 
-internal data class EventResponse(
+data class EventResponse(
     val id: Long,
     val authorId: Long,
     val author: String,

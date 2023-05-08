@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">NeWork</string>
+    <string name="login">Login</string>
+    <string name="home">Home</string>
+    <string name="users">Users</string>
+    <string name="account">Account</string>
+    <string name="wall">Wall</string>
+    <string name="password">Password</string>
+    <string name="full_name">Full name</string>
+    <string name="input_content">Input your content here</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="type">Type</string>
+    <string name="start">Start</string>
+    <string name="event_editor">Event editor</string>
+    <string name="online_webinar">Online webinar</string>
+    <string name="offline_conference">Offline conference</string>
+    <string name="link">Link</string>
+    <string name="geolocation">Geolocation</string>
+    <string name="speakers">Speakers</string>
+    <string name="favorite">Favorite</string>
+
+    <string-array name="selected_users_filter">
+        <item>All</item>
+        <item>Selected</item>
+        <item>Unselected</item>
+    </string-array>
+</resources>

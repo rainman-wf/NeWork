@@ -5,7 +5,7 @@ import ru.rainman.domain.model.Attachment
 import ru.rainman.domain.model.Coordinates
 
 @Entity(tableName = "events")
-internal data class EventEntity(
+data class EventEntity(
     @PrimaryKey
     @ColumnInfo(name = "event_id")
     val eventId: Long,

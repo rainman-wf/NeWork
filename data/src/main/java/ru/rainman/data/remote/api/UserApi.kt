@@ -8,7 +8,7 @@ import retrofit2.http.*
 import ru.rainman.data.remote.response.UserResponse
 import ru.rainman.domain.model.Token
 
-internal interface UserApi {
+interface UserApi {
 
     @GET("users")
     suspend fun getAll() : Response<List<UserResponse>>

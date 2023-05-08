@@ -15,7 +15,7 @@ import ru.rainman.domain.model.LinkPreview
     ]
 )
 
-internal data class PostLinkPreviewEntity(
+data class PostLinkPreviewEntity(
     @PrimaryKey
     @ColumnInfo(name = "post_id")
     override val publicationId: Long,

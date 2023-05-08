@@ -17,7 +17,7 @@ import ru.rainman.data.local.entity.PostEntity
         )
     ]
 )
-internal data class PostsLikeOwnersCrossRef(
+data class PostsLikeOwnersCrossRef(
     @ColumnInfo(name = "post_id")  override val parentId: Long,
     @ColumnInfo(name = "user_id") override val childId: Long,
 ) : CrossRef

@@ -10,7 +10,7 @@ import ru.rainman.data.local.utils.PublicationUsersDiff
 
 
 @Dao
-internal interface PostDao : BaseDao<PostEntity> {
+interface PostDao : BaseDao<PostEntity> {
 
     @Transaction
     @Query("SELECT * FROM posts ORDER BY post_id DESC")

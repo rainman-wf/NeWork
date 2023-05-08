@@ -7,7 +7,7 @@ import ru.rainman.data.local.entity.UserEntity
 import ru.rainman.data.local.entity.UserWithJob
 
 @Dao
-internal interface UserDao : BaseDao<UserEntity> {
+interface UserDao : BaseDao<UserEntity> {
 
     @Transaction
     @Query("SELECT * FROM users ORDER BY user_id LIMIT :size OFFSET :offset")

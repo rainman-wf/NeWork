@@ -5,7 +5,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.rainman.data.remote.response.PostResponse
 
-internal interface MyWallApi {
+interface MyWallApi {
 
     @GET("my/wall")
     suspend fun getAll(): List<PostResponse>

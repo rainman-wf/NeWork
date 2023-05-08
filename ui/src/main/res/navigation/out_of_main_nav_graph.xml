@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/out_of_main_nav_graph"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="ru.rainman.ui.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_eventEditorFragment"
+            app:destination="@id/eventEditorFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_postEditorFragment"
+            app:destination="@id/postEditorFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_postsFragment"
+            app:destination="@id/postsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventEditorFragment"
+        android:name="ru.rainman.ui.EventEditorFragment"
+        android:label="fragment_event_editor"
+        tools:layout="@layout/fragment_event_editor" />
+    <fragment
+        android:id="@+id/postEditorFragment"
+        android:name="ru.rainman.ui.PostEditorFragment"
+        android:label="fragment_post_editor"
+        tools:layout="@layout/fragment_post_editor" />
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="ru.rainman.ui.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" />
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="ru.rainman.ui.UserInfoFragment"
+        android:label="fragment_user_info"
+        tools:layout="@layout/fragment_user_info" />
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="ru.rainman.ui.PostsFragment"
+        android:label="fragment_posts"
+        tools:layout="@layout/fragment_posts" >
+        <action
+            android:id="@+id/action_postsFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="ru.rainman.ui.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
+</navigation>

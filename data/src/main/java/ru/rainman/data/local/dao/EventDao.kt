@@ -9,7 +9,7 @@ import ru.rainman.data.local.entity.crossref.*
 import ru.rainman.data.local.utils.PublicationUsersDiff
 
 @Dao
-internal interface EventDao : BaseDao<EventEntity> {
+interface EventDao : BaseDao<EventEntity> {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLikeOwners(ids: List<EventsLikeOwnersCrossRef>)

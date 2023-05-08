@@ -8,7 +8,7 @@ import ru.rainman.data.local.entity.RemoteKeysEntity
 import ru.rainman.data.local.entity.WallRemoteKeyEntity
 
 @Dao
-internal interface RemoteKeyDao {
+interface RemoteKeyDao {
 
     @Query("UPDATE remote_keys SET max = :value WHERE key = :key")
     fun setMax(value: Long, key: RemoteKeysEntity.Key)

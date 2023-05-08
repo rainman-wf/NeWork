@@ -17,7 +17,7 @@ import ru.rainman.data.local.entity.EventEntity
         )
     ]
 )
-internal data class EventsSpeakersCrossRef(
+data class EventsSpeakersCrossRef(
     @ColumnInfo(name = "event_id")  override val parentId: Long,
     @ColumnInfo(name = "user_id") override val childId: Long,
 ) : CrossRef

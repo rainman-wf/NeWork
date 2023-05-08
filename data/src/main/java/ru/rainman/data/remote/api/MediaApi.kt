@@ -7,7 +7,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import ru.rainman.data.remote.response.MediaResponse
 
-internal interface MediaApi {
+interface MediaApi {
 
     @Multipart
     @POST("media")

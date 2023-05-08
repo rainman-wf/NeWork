@@ -1,6 +1,6 @@
 package ru.rainman.data.remote.response
 
-internal data class JobResponse (
+data class JobResponse (
     val id: Long,
     val name: String,
     val position: String,

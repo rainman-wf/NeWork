@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import ru.rainman.data.remote.response.Attachment
 import ru.rainman.data.remote.response.Coordinates
 
-internal data class PostResponse(
+data class PostResponse(
     val id: Long,
     val authorId: Long,
     val content: String,

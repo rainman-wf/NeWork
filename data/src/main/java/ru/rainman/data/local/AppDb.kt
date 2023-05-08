@@ -35,9 +35,9 @@ import ru.rainman.data.local.entity.crossref.*
 )
 abstract class AppDb : RoomDatabase() {
 
-    internal abstract val eventDao: EventDao
-    internal abstract val jobDao: JobDao
-    internal abstract val postDao: PostDao
-    internal abstract val userDao: UserDao
-    internal abstract val remoteKeyDao: RemoteKeyDao
+    abstract val eventDao: EventDao
+    abstract val jobDao: JobDao
+    abstract val postDao: PostDao
+    abstract val userDao: UserDao
+    abstract val remoteKeyDao: RemoteKeyDao
 }

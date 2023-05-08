@@ -6,7 +6,7 @@ import ru.rainman.data.local.entity.FavoriteUserIdEntity
 import ru.rainman.data.local.entity.JobEntity
 import ru.rainman.data.local.entity.UserEntity
 
-internal data class UserWithJob(
+data class UserWithJob(
     @Embedded
     val userEntity: UserEntity,
     @Relation(

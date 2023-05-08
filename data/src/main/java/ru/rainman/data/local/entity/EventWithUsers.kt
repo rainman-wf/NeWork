@@ -7,7 +7,7 @@ import ru.rainman.data.local.entity.crossref.EventsLikeOwnersCrossRef
 import ru.rainman.data.local.entity.crossref.EventsParticipantsCrossRef
 import ru.rainman.data.local.entity.crossref.EventsSpeakersCrossRef
 
-internal data class EventWithUsers (
+data class EventWithUsers (
     @Embedded
     val eventEntity: EventEntity,
     @Relation(

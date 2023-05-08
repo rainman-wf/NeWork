@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EventEditorFragment">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            style="?attr/appBarLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:navigationIcon="@drawable/close"
+            app:title="@string/event_editor"
+            app:titleCentered="true" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/linear_layout_space_16"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:showDividers="middle">
+
+            <!--            <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:gravity="center"
+                            android:text="ATTACHMENT STUB"
+                            android:textAlignment="gravity" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_event_content"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/input_content"
+                                tools:text="Some content" />
+
+                        </com.google.android.material.textfield.TextInputLayout>-->
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/event_type_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:checkedButton="@+id/event_editor_online"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <Button
+                    android:id="@+id/event_editor_online"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/online_webinar" />
+
+                <Button
+                    android:id="@+id/event_editor_offline"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/offline_conference" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/event_editor_input_link_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stateListAnimator="@animator/link_geo_input_anim"
+                    app:startIconDrawable="@drawable/web_link">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/event_editor_input_link"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:hint="@string/link"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/event_editor_input_geo_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stateListAnimator="@animator/link_geo_input_anim"
+                    app:startIconDrawable="@drawable/location"
+                    android:enabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/event_editor_input_geo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:hint="@string/geolocation"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/start" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0.5"
+                    app:startIconDrawable="@drawable/date">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/event_editor_set_date"
+                        style="@style/UneditableInputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/date" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:startIconDrawable="@drawable/time">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/event_editor_set_time"
+                        style="@style/UneditableInputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/time" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/speakers" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/md_theme_light_secondary"/>
+
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                app:icon="@drawable/add"
+                android:paddingLeft="16dp"
+                android:elevation="8dp"
+                android:text="Add"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/done"
+        app:maxImageSize="32dp" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

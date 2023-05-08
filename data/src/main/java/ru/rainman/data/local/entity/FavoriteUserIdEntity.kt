@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-internal data class FavoriteUserIdEntity(
+data class FavoriteUserIdEntity(
     @PrimaryKey
     @ColumnInfo(name = "user_id")
     val userId: Long

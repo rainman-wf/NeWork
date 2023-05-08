@@ -6,7 +6,7 @@ import androidx.room.Relation
 import ru.rainman.data.local.entity.crossref.PostsLikeOwnersCrossRef
 import ru.rainman.data.local.entity.crossref.PostsMentionedUsersCrossRef
 
-internal data class PostWithUsers(
+data class PostWithUsers(
     @Embedded
     val postEntity: PostEntity,
     @Relation(

@@ -1,5 +1,5 @@
 package ru.rainman.data.remote.response
 
-internal data class Error(
+data class Error(
     val reason: String
 )
