@@ -29,7 +29,11 @@
         android:id="@+id/eventEditorFragment"
         android:name="ru.rainman.ui.EventEditorFragment"
         android:label="fragment_event_editor"
-        tools:layout="@layout/fragment_event_editor" />
+        tools:layout="@layout/fragment_event_editor" >
+        <action
+            android:id="@+id/action_eventEditorFragment_to_selectUsersDialogFragment"
+            app:destination="@id/selectUsersDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/postEditorFragment"
         android:name="ru.rainman.ui.PostEditorFragment"
@@ -59,4 +63,12 @@
         android:name="ru.rainman.ui.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+    <dialog
+        android:id="@+id/selectUsersDialogFragment"
+        android:name="ru.rainman.ui.SelectUsersDialogFragment"
+        android:label="SelectUsersDialogFragment" >
+        <argument
+            android:name="ids"
+            app:argType="long[]" />
+    </dialog>
 </navigation>

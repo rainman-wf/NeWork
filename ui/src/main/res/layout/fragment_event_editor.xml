@@ -35,26 +35,6 @@
             android:padding="16dp"
             android:showDividers="middle">
 
-            <!--            <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="140dp"
-                            android:gravity="center"
-                            android:text="ATTACHMENT STUB"
-                            android:textAlignment="gravity" />
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/input_event_content"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="@string/input_content"
-                                tools:text="Some content" />
-
-                        </com.google.android.material.textfield.TextInputLayout>-->
-
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/event_type_toggle"
                 android:layout_width="match_parent"
@@ -105,9 +85,9 @@
                     android:id="@+id/event_editor_input_geo_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:stateListAnimator="@animator/link_geo_input_anim"
-                    app:startIconDrawable="@drawable/location"
-                    android:enabled="false">
+                    app:startIconDrawable="@drawable/location">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/event_editor_input_geo"
@@ -171,30 +151,118 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/speakers" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/md_theme_light_secondary"/>
-
-            <com.google.android.material.chip.ChipGroup
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="56dp"/>
+                android:minHeight="48dp"
+                app:cardCornerRadius="4dp"
+                app:strokeColor="?attr/colorOutline">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/speakers_chips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:chipSpacingVertical="0dp" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_speaker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                app:icon="@drawable/add"
-                android:paddingLeft="16dp"
                 android:elevation="8dp"
-                android:text="Add"/>
+                android:paddingLeft="16dp"
+                android:text="Add"
+                app:icon="@drawable/add" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_event_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/input_content"
+                    tools:text="Some content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_event_attachment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:elevation="8dp"
+                android:paddingLeft="16dp"
+                android:text="Add attachment"
+                app:icon="@drawable/add" />
 
         </LinearLayout>
 
+
     </androidx.core.widget.NestedScrollView>
 
+    <LinearLayout
+        android:id="@+id/media_storage_conatiner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        style="@style/Widget.Material3.BottomSheet"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.BottomSheet.DragHandle"/>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/event_attachement_type_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:checkedButton="@+id/event_editor_online"
+            app:selectionRequired="true"
+            app:singleSelection="true"
+            android:layout_marginHorizontal="8dp">
+
+            <Button
+                android:id="@+id/attachment_type_image"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Image" />
+
+            <Button
+                android:id="@+id/attachment_type_audio"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Audio" />
+
+            <Button
+                android:id="@+id/attachment_type_video"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Video" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"/>
+
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

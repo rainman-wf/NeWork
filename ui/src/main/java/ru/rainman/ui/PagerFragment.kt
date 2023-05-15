@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.Args.*
 import ru.rainman.ui.databinding.FragmentPagerBinding
 
+@AndroidEntryPoint
 class PagerFragment : Fragment(R.layout.fragment_pager) {
 
     private val binding: FragmentPagerBinding by viewBinding(FragmentPagerBinding::bind)

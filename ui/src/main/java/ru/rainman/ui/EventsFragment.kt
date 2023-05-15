@@ -5,9 +5,11 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.FragmentEventsBinding
 import ru.rainman.ui.helperutils.getNavController
 
+@AndroidEntryPoint
 class EventsFragment : Fragment(R.layout.fragment_events) {
 
     private val binding: FragmentEventsBinding by viewBinding (FragmentEventsBinding::bind)
