@@ -11,9 +11,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.example.common_utils.log
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.DialogFragmentSelectUsersBinding
-import ru.rainman.ui.helperutils.log
 import ru.rainman.ui.helperutils.menuItemHandle
 
 @AndroidEntryPoint

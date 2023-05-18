@@ -216,7 +216,7 @@
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.Material3.BottomSheet.DragHandle"/>
+            style="@style/Widget.Material3.BottomSheet.DragHandle" />
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/event_attachement_type_toggle"
@@ -254,10 +254,13 @@
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:padding="4dp"
+            android:id="@+id/storage_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="3"/>
+            app:spanCount="3"
+            tools:listitem="@layout/card_storage_image_item"/>
 
     </LinearLayout>
 

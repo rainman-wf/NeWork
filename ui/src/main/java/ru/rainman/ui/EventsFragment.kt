@@ -3,18 +3,24 @@ package ru.rainman.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.rainman.ui.databinding.FragmentEventsBinding
 import ru.rainman.ui.helperutils.getNavController
+import ru.rainman.ui.helperutils.snack
 
 @AndroidEntryPoint
 class EventsFragment : Fragment(R.layout.fragment_events) {
 
     private val binding: FragmentEventsBinding by viewBinding (FragmentEventsBinding::bind)
-    lateinit var navController: NavController
-
+    private lateinit var navController: NavController
+    private val viewModel: EventsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -23,5 +29,42 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
         binding.newEvent.setOnClickListener {
             navController.navigate(MainFragmentDirections.actionMainFragmentToEventEditorFragment())
         }
+
+        val adapter = EventsAdapter (object : OnEventClickListener {
+            override fun onLikeClicked(eventId: Long) {
+                viewModel.like(eventId)
+            }
+
+            override fun onParticipateClicked(eventId: Long) {
+               viewModel.participate(eventId)
+            }
+
+            override fun onShareClicked(eventId: Long) {
+                snack("share $eventId")
+            }
+
+            override fun onMoreClicked(eventId: Long) {
+                snack("more $eventId")
+            }
+
+            override fun onAuthorClicked(eventId: Long) {
+                snack("author $eventId")
+            }
+
+            override fun onEventClicked(eventId: Long) {
+                snack("event $eventId")
+            }
+
+        })
+
+        binding.eventList.adapter = adapter
+
+        lifecycleScope.launch {
+            viewModel.events.collectLatest {
+                adapter.submitData(it)
+            }
+        }
     }
 }
+
+

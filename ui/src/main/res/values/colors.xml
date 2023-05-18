@@ -124,4 +124,6 @@
 
     <color name="md_theme_dark_onSurfaceVariant">#BEC9C7</color>
 
+    <color name="transparent">#00FFFFFF</color>
+
 </resources>

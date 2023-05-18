@@ -1,6 +1,6 @@
 package ru.rainman.domain.repository
 
-import ru.rainman.domain.dto.NewObjectDto
-import ru.rainman.domain.model.BaseModel
+import ru.rainman.domain.dto.NewPostDto
+import ru.rainman.domain.model.Post
 
-interface PostRepository<M: BaseModel, NO: NewObjectDto> : PublicationsRepository<M, NO>
+interface PostRepository: PublicationsRepository<Post, NewPostDto>

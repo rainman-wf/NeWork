@@ -9,6 +9,7 @@ import ru.rainman.domain.model.BaseModel
 
 interface BaseRepository<M : BaseModel, NO : NewObjectDto> {
     val repositoryScope: CoroutineScope get() = CoroutineScope(Dispatchers.IO)
+
     val data: Flow<PagingData<M>>
 
     suspend fun create(newObjectDto: NO)

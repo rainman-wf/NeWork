@@ -1,9 +1,9 @@
 package ru.rainman.domain.repository
 
-import ru.rainman.domain.dto.NewObjectDto
-import ru.rainman.domain.model.BaseModel
+import ru.rainman.domain.dto.NewEventDto
+import ru.rainman.domain.model.Event
 
-interface EventRepository<M : BaseModel, NO : NewObjectDto> : PublicationsRepository<M, NO> {
+interface EventRepository : PublicationsRepository<Event, NewEventDto> {
 
-    suspend fun participate(id: Long) : M
+    suspend fun participate(id: Long) : Event
 }

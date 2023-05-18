@@ -1,18 +1,14 @@
 package ru.rainman.ui
 
 import android.os.Bundle
-import android.text.Spanned
-import android.text.style.ImageSpan
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.loader.app.LoaderManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDragHandleView
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -20,8 +16,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.FragmentEventEditorBinding
 import ru.rainman.ui.helperutils.TimeUnitsWrapper
 import ru.rainman.ui.helperutils.getNavController
-import ru.rainman.ui.helperutils.log
+import ru.rainman.ui.helperutils.toFile
 import ru.rainman.ui.helperutils.toStringDate
+import java.io.File
 
 @AndroidEntryPoint
 class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
@@ -40,13 +37,25 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.mediaStorageConatiner)
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        LoaderManager
+            .getInstance(this)
+            .initLoader(
+                1,
+                null,
+                GalleryLoaderManager(viewModel, requireContext())
+            )
+
         binding.eventTypeToggle.addOnButtonCheckedListener { _, id, isChecked ->
             if (isChecked) viewModel.online(id == binding.eventEditorOnline.id)
         }
 
         viewModel.speakers.observe(viewLifecycleOwner) {
             binding.speakersChips.removeAllViews()
-            it.forEach {user ->
+            it.forEach { user ->
                 val chip = Chip(binding.speakersChips.context)
                 chip.text = user.name
                 chip.isCloseIconVisible = true
@@ -96,7 +105,18 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
                 )
         }
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.mediaStorageConatiner)
+        val storageAdapter = ImageGalleryAdapter {
+            viewModel.sendPhoto(it.toFile(requireContext()))
+        }
+
+        binding.storageGrid.adapter = storageAdapter
+
+        viewModel.imgList.observe(viewLifecycleOwner) {
+            storageAdapter.submitList(it)
+            it.map { uri ->
+                uri.path?.let { it1 -> File(it1) }
+            }
+        }
 
         binding.addEventAttachment.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED

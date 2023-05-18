@@ -33,20 +33,24 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation project(path: ':common_utils')
 
     implementation "androidx.room:room-runtime:2.5.1"
     implementation 'androidx.room:room-ktx:2.5.1'
+    kapt "androidx.room:room-compiler:2.5.1"
     implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
     implementation 'androidx.room:room-paging:2.5.1'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
-    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
 
-    implementation('com.google.dagger:dagger:2.46')
-    kapt('com.google.dagger:dagger-compiler:2.46')
+    implementation('com.google.dagger:dagger:2.46.1')
+    kapt('com.google.dagger:dagger-compiler:2.46.1')
 
     implementation project(path: ':domain')
+    implementation 'org.jsoup:jsoup:1.16.1'
+
 }

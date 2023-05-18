@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.rainman.domain.model.User
 import ru.rainman.ui.helperutils.SelectableUser
-import ru.rainman.ui.helperutils.log
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +24,6 @@ class SelectUsersDialogViewModel @Inject constructor() : ViewModel() {
     val selectableUsers: LiveData<List<SelectableUser>> get() = _selectableUsers
 
     init {
-        log("view model init")
-
         _selectableUsers.addSource(_users) {
             _selectableUsers.postValue(combineSelectable(it, _selectedIds.value ?: emptySet()))
         }
