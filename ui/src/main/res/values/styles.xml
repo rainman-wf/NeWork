@@ -11,7 +11,7 @@
     </style>
 
     <style name="UneditableInputText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
-        <item name="android:inputType">date</item>
+        <item name="android:inputType">none</item>
         <item name="android:focusable">false</item>
         <item name="android:cursorVisible">false</item>
     </style>

@@ -21,9 +21,6 @@
         <action
             android:id="@+id/action_mainFragment_to_postsFragment"
             app:destination="@id/postsFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventEditorFragment"
@@ -33,6 +30,9 @@
         <action
             android:id="@+id/action_eventEditorFragment_to_selectUsersDialogFragment"
             app:destination="@id/selectUsersDialogFragment" />
+        <action
+            android:id="@+id/action_eventEditorFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/postEditorFragment"

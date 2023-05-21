@@ -31,4 +31,6 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'com.yandex.android:maps.mobile:4.3.1-full'
+    implementation project(":domain")
 }

@@ -5,58 +5,53 @@
     style="@style/Widget.Material3.CardView.Elevated"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
     android:layout_marginTop="16dp"
-    app:cardElevation="8dp"
-    android:layout_marginHorizontal="16dp">
+    app:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@drawable/linear_layout_space_8"
         android:orientation="vertical"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
-        android:divider="@drawable/linear_layout_space_8"
         android:showDividers="middle">
 
         <include
             android:id="@+id/header"
             layout="@layout/card_user_preview_base" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ru.rainman.ui.view.AttachmentView
+            android:id="@+id/event_attachment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/event_attachment"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:src="@drawable/image_stub"
-                app:layout_constraintDimensionRatio="16:9"
-                app:layout_constraintTop_toTopOf="parent"
-                android:scaleType="centerCrop"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content"
+            app:media_type="image"
+            app:max_ratio="2.4"
+            app:min_ratio="0.77"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="5"
             android:ellipsize="end"
+            android:maxLines="5"
             app:layout_constraintTop_toBottomOf="@+id/event_attachment"
             tools:text="Bottom Sheets are surface components that hold supplementary screen content. They are anchored to the bottom of a screen (making them ergonomic on mobile/tablet devices) and, similar to Dialogs, are elevated over main screen content. In most cases, they can be expanded/dismissed via a drag up/down gesture." />
 
         <ImageButton
+            android:id="@+id/expand_content"
             android:layout_width="48dp"
             android:layout_height="16dp"
             android:layout_gravity="end"
-            android:src="@drawable/expandable"
-            android:background="@color/transparent"/>
+            android:background="@color/transparent"
+            android:src="@drawable/expandable" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/colorPrimary"/>
+            android:background="?attr/colorPrimary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,24 +63,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/like_checkable"
-                android:text="Like"
-                android:padding="8dp"/>
+                android:padding="8dp"
+                android:text="Like" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/share"
+                android:background="@color/transparent"
                 android:padding="8dp"
                 android:text="Share"
-                android:background="@color/transparent"
-                app:iconTint="?attr/colorOnSurface"
-                android:textColor="?attr/colorOnSurface"/>
+                android:textColor="?attr/colorOnSurface"
+                app:icon="@drawable/share"
+                app:iconTint="?attr/colorOnSurface" />
 
         </LinearLayout>
 

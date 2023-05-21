@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#4B006A66">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintDimensionRatio="16:10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/outline_ondemand_video_24"
+        tools:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/play"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/circle_background"
+        android:src="@drawable/play_pause"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="8dp"/>
+
+    <TextView
+        android:id="@id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/duration"
+        app:layout_constraintStart_toEndOf="@+id/play"
+        app:layout_constraintBaseline_toBaselineOf="@id/duration"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingHorizontal="8dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="12:18" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/playable"
+        android:layout_width="4dp"
+        android:layout_height="2dp"
+        app:constraint_referenced_ids="duration,play" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

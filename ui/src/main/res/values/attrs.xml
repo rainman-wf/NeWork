@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AttachmentView">
+        <attr name="media_type" format="enum">
+            <enum name="image" value="0"/>
+            <enum name="audio" value="1"/>
+            <enum name="video" value="2"/>
+        </attr>
+        <attr name="min_ratio" format="float"/>
+        <attr name="max_ratio" format="float"/>
+    </declare-styleable>
+</resources>

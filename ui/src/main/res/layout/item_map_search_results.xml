@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/geoObjectName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        tools:text="Victory Park"/>
+
+    <TextView
+        android:id="@+id/geoObjectAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Kazan, Yamasheva Avenue, 42A"/>
+
+</LinearLayout>

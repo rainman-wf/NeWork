@@ -2,10 +2,12 @@ package ru.rainman.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.loader.app.LoaderManager
+import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -25,6 +27,7 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
 
     private val binding: FragmentEventEditorBinding by viewBinding(FragmentEventEditorBinding::bind)
     private val viewModel: EventEditorViewModel by viewModels()
+    private lateinit var navController: NavController
 
     private val datePicker =
         MaterialDatePicker.Builder.datePicker().setTitleText("Select date").setSelection(
@@ -36,6 +39,9 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             .build()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        navController =
+            requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.mediaStorageConatiner)
 
@@ -64,16 +70,26 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
         }
 
         viewModel.selected.observe(viewLifecycleOwner) {
-            binding.eventEditorInputLinkLayout.isEnabled = it
-            binding.eventEditorInputGeoLayout.isEnabled = !it
+            binding.eventEditorInputLinkLayout.isSelected = it
+            binding.eventEditorInputLinkLayout.isVisible = it
+            binding.eventEditorInputGeoLayout.isSelected = !it
+            binding.eventEditorInputGeoLayout.isVisible = !it
         }
 
         binding.eventEditorSetDate.setOnClickListener {
             datePicker.show(childFragmentManager, null)
         }
 
+        binding.eventEditorInputGeo.setOnClickListener {
+            navController.navigate(EventEditorFragmentDirections.actionEventEditorFragmentToMapFragment())
+        }
+
         datePicker.addOnPositiveButtonClickListener {
             viewModel.setDate(it)
+        }
+
+        binding.eventEditorAppBar.setNavigationOnClickListener {
+            navController.popBackStack()
         }
 
         binding.eventEditorSetTime.setOnClickListener {
@@ -97,12 +113,12 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
         }
 
         binding.addSpeaker.setOnClickListener {
-            requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
-                .navigate(
-                    EventEditorFragmentDirections.actionEventEditorFragmentToSelectUsersDialogFragment(
+            navController.navigate(
+                EventEditorFragmentDirections
+                    .actionEventEditorFragmentToSelectUsersDialogFragment(
                         viewModel.speakers.value?.map { it.id }?.toLongArray() ?: longArrayOf()
                     )
-                )
+            )
         }
 
         val storageAdapter = ImageGalleryAdapter {

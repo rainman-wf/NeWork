@@ -5,6 +5,12 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+def properties = new Properties()
+def file = project.rootProject.file("private.properties")
+if (file.exists()) {
+    properties.load(file.newReader())
+}
+
 android {
     namespace 'ru.rainman.nework'
     compileSdk 33
@@ -16,7 +22,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "MAPS_API_KEY", '"' + properties.getProperty("MAPS_API_KEY", " ") + '"'
     }
 
     buildTypes {
@@ -52,4 +58,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+
+    implementation 'com.yandex.android:maps.mobile:4.3.1-full'
+
 }

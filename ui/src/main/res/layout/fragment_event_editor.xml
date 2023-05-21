@@ -13,6 +13,7 @@
         android:layout_height="?attr/actionBarSize">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/event_editor_app_bar"
             style="?attr/appBarLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -69,7 +70,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@animator/link_geo_input_anim"
-                    app:startIconDrawable="@drawable/web_link">
+                    app:startIconDrawable="@drawable/web_link"
+                    app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/event_editor_input_link"
@@ -85,15 +87,16 @@
                     android:id="@+id/event_editor_input_geo_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
                     android:stateListAnimator="@animator/link_geo_input_anim"
-                    app:startIconDrawable="@drawable/location">
+                    app:startIconDrawable="@drawable/location"
+                    app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/event_editor_input_geo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        style="@style/UneditableInputText"
                         android:hint="@string/geolocation"
                         android:maxLines="1" />
 
