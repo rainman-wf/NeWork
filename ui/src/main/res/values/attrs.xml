@@ -8,5 +8,6 @@
         </attr>
         <attr name="min_ratio" format="float"/>
         <attr name="max_ratio" format="float"/>
+        <attr name="default_ratio" format="float"/>
     </declare-styleable>
 </resources>

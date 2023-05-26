@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="16dp"
+    android:layout_marginVertical="8dp"
     app:cardElevation="8dp">
 
     <LinearLayout
@@ -28,8 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:min_ratio="0.78"
-            app:max_ratio="1.77" />
+            app:min_ratio="0.5"
+            app:max_ratio="2.4" />
 
         <TextView
             android:id="@+id/content"

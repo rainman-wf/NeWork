@@ -10,13 +10,14 @@
         android:id="@+id/geoObjectName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
+        android:textSize="18sp"
         tools:text="Victory Park"/>
 
     <TextView
         android:id="@+id/geoObjectAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Kazan, Yamasheva Avenue, 42A"/>
+        tools:text="Kazan, Yamasheva Avenue, 42A"
+        android:textSize="14sp"/>
 
 </LinearLayout>

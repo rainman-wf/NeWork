@@ -39,7 +39,10 @@ class EventsAdapter(
                 content.text = event.content
 
                 event.attachment?.let {
-                    eventAttachment.setData(it.type, it.url)
+                    eventAttachment.setData(it)
+                    eventAttachment.setOnPlayClickListener {
+                        onEventClickListener.onPlayClicked(it.url)
+                    }
                 } ?: eventAttachment.recycle()
 
                 like.isChecked = event.likedByMe

@@ -1,9 +1,7 @@
 package ru.rainman.data.local.entity
 
 import androidx.room.*
-import ru.rainman.domain.model.Attachment
 import ru.rainman.domain.model.Coordinates
-
 
 @Entity(tableName = "posts")
 data class PostEntity(
@@ -21,8 +19,6 @@ data class PostEntity(
     val mentionedMe: Boolean,
     @ColumnInfo(name = "liked_by_me")
     val likedByMe: Boolean,
-    @Embedded(prefix = "attachment_")
-    val attachment: Attachment?,
     @ColumnInfo(name = "owned_by_me")
     val ownedByMe: Boolean,
 )

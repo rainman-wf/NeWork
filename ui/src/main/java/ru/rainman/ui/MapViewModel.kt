@@ -18,14 +18,15 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val mapRepository: MapRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _pointLiveData = MutableLiveData<GeoObject>()
     val pointLiveData: LiveData<GeoObject> = _pointLiveData
 
-    val searchResulLiveData: MutableLiveData<List<GeoObject>> =
-        mapRepository.geoObjects.asLiveData(viewModelScope.coroutineContext, 500) as MutableLiveData<List<GeoObject>>
-
+    private val _searchResulLiveData: MutableLiveData<List<GeoObject>> =
+        mapRepository.geoObjects.asLiveData(viewModelScope.coroutineContext, 500)
+                as MutableLiveData<List<GeoObject>>
+    val searchResulLiveData: LiveData<List<GeoObject>> get() = _searchResulLiveData
 
     fun search(query: String, visibleRegion: VisibleRegion) {
         viewModelScope.launch {
@@ -33,9 +34,15 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    fun resetSearchResults() {
+        _searchResulLiveData.postValue(emptyList())
+    }
+
     fun getGeocode(point: Point) {
         viewModelScope.launch {
             _pointLiveData.postValue(mapRepository.getGeocode(point.toModel()))
         }
     }
+
+
 }

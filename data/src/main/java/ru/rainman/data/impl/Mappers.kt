@@ -55,7 +55,6 @@ fun EventResponse.toEntity() = EventEntity(
     type = type,
     likedByMe = likedByMe,
     participatedByMe = participatedByMe,
-    attachment = attachment?.toModel(),
     ownedByMe = ownedByMe,
     link = link
 )
@@ -73,7 +72,7 @@ fun EventWithUsers.toModel() = Event(
     speakerIds = speakers.map { it.toModel() },
     participantsIds = participants.map { it.toModel() },
     participatedByMe = eventEntity.participatedByMe,
-    attachment = eventEntity.attachment,
+    attachment = attachment?.toModel(),
     link = linkPreview?.toModel(),
     ownedByMe = eventEntity.ownedByMe,
 )
@@ -83,10 +82,13 @@ fun Coordinates.toModel() = CoordinatesModel(
     longitude = longitude.toDouble()
 )
 
-fun Attachment.toModel() = AttachmentModel(
-    url = url,
-    type = AttachmentType.valueOf(type)
-)
+fun AttachmentEntity.toModel() : AttachmentModel {
+    return when(this.type) {
+        AttachmentType.IMAGE -> Image(url, 1.7f)
+        AttachmentType.VIDEO -> Video(url, duration!!, ratio!!)
+        AttachmentType.AUDIO -> Audio(url, duration!!, artist!!, title!!)
+    }
+}
 
 fun PostWithUsers.toModel() = Post(
     id = postEntity.postId,
@@ -99,7 +101,7 @@ fun PostWithUsers.toModel() = Post(
     mentionIds = mentioned.map { it.toModel() },
     mentionedMe = postEntity.mentionedMe,
     likedByMe = postEntity.likedByMe,
-    attachment = postEntity.attachment,
+    attachment = attachment?.toModel(),
     ownedByMe = postEntity.ownedByMe,
 )
 
@@ -111,7 +113,6 @@ fun PostResponse.toEntity() = PostEntity(
     coordinates = coordinates?.toModel(),
     mentionedMe = mentionedMe,
     likedByMe = likedByMe,
-    attachment = attachment?.toModel(),
     ownedByMe = ownedByMe,
     link = link
 )
@@ -150,7 +151,6 @@ fun EventEntity.compareWith(eventEntity: EventEntity): Boolean {
             datetime == eventEntity.datetime &&
             coordinates == eventEntity.coordinates &&
             type == eventEntity.type &&
-            attachment == eventEntity.attachment &&
             link == eventEntity.link &&
             participatedByMe == eventEntity.participatedByMe &&
             likedByMe == eventEntity.likedByMe
@@ -159,7 +159,6 @@ fun EventEntity.compareWith(eventEntity: EventEntity): Boolean {
 fun PostEntity.compareWith(postEntity: PostEntity): Boolean {
     return content == postEntity.content &&
             coordinates == postEntity.coordinates &&
-            attachment == postEntity.attachment &&
             link == postEntity.link &&
             likedByMe == postEntity.likedByMe &&
             mentionedMe == postEntity.mentionedMe

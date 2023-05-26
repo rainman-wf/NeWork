@@ -2,6 +2,7 @@ package ru.rainman.ui.helperutils
 
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.IdRes
@@ -15,6 +16,7 @@ import ru.rainman.domain.model.geo.Geometry
 import ru.rainman.domain.model.geo.Point
 import ru.rainman.domain.model.geo.SearchResult
 import ru.rainman.domain.model.geo.ToponymObjectData
+import ru.rainman.ui.VideoPlayerDialogFragment
 import java.io.File
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -59,5 +61,13 @@ fun Int.asDuration(): String {
     val durationMinutes = seconds / 60
     val durationSeconds = DecimalFormat("00").format(seconds % 60)
     return "$durationMinutes:$durationSeconds"
+}
+
+fun Fragment.showVideoDialog(uri: String) {
+    val dialog = VideoPlayerDialogFragment()
+    val bundle = Bundle()
+    bundle.putString("uri", uri)
+    dialog.arguments = bundle
+    dialog.show(parentFragmentManager, null)
 }
 

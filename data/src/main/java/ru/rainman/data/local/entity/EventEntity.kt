@@ -1,7 +1,6 @@
 package ru.rainman.data.local.entity
 
 import androidx.room.*
-import ru.rainman.domain.model.Attachment
 import ru.rainman.domain.model.Coordinates
 
 @Entity(tableName = "events")
@@ -22,8 +21,6 @@ data class EventEntity(
     val likedByMe: Boolean,
     @ColumnInfo(name = "participated_by_me")
     val participatedByMe: Boolean,
-    @Embedded(prefix = "attachment_")
-    val attachment: Attachment?,
     @ColumnInfo(name = "owned_by_me")
     val ownedByMe: Boolean,
 )

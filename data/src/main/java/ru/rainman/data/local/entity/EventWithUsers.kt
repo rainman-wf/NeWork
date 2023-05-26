@@ -17,6 +17,12 @@ data class EventWithUsers (
     )
     val author: UserWithJob,
     @Relation(
+        entity = EventAttachmentEntity::class,
+        parentColumn = "event_id",
+        entityColumn = "event_id"
+    )
+    val attachment: EventAttachmentEntity?,
+    @Relation(
         parentColumn = "event_id",
         entityColumn = "event_id"
     )

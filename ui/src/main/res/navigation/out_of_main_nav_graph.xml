@@ -38,7 +38,11 @@
         android:id="@+id/postEditorFragment"
         android:name="ru.rainman.ui.PostEditorFragment"
         android:label="fragment_post_editor"
-        tools:layout="@layout/fragment_post_editor" />
+        tools:layout="@layout/fragment_post_editor" >
+        <action
+            android:id="@+id/action_postEditorFragment_to_selectUsersDialogFragment"
+            app:destination="@id/selectUsersDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/registrationFragment"
         android:name="ru.rainman.ui.RegistrationFragment"

@@ -12,9 +12,39 @@
         android:layout_height="wrap_content"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/audio_player_controller"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:orientation="horizontal"
+        android:background="?attr/colorSecondaryContainer"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/play_pause"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/play_pause"
+            android:background="@color/transparent"
+            android:layout_marginHorizontal="8dp"/>
+
+        <SeekBar
+            android:id="@+id/audio_progress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:background="@color/transparent"/>
+
+        <ImageButton
+            android:id="@+id/stop_audio"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/close"
+            android:background="@color/transparent"
+            android:layout_marginHorizontal="8dp"/>
+
+    </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"

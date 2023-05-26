@@ -2,6 +2,8 @@ package ru.rainman.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.*
+import ru.rainman.data.local.entity.AttachmentEntity
+import ru.rainman.data.local.entity.EventAttachmentEntity
 import ru.rainman.data.local.entity.EventEntity
 import ru.rainman.data.local.entity.EventLinkPreviewEntity
 import ru.rainman.data.local.entity.EventWithUsers
@@ -10,6 +12,9 @@ import ru.rainman.data.local.utils.PublicationUsersDiff
 
 @Dao
 interface EventDao : BaseDao<EventEntity> {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAttachment(attachment: EventAttachmentEntity) : Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLikeOwners(ids: List<EventsLikeOwnersCrossRef>)

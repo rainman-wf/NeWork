@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.ui.databinding.FragmentEventsBinding
 import ru.rainman.ui.helperutils.getNavController
+import ru.rainman.ui.helperutils.showVideoDialog
 import ru.rainman.ui.helperutils.snack
 
 @AndroidEntryPoint
@@ -53,6 +54,10 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
 
             override fun onEventClicked(eventId: Long) {
                 snack("event $eventId")
+            }
+
+            override fun onPlayClicked(uri: String) {
+                showVideoDialog(uri)
             }
 
         })

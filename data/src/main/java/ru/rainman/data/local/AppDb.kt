@@ -29,7 +29,9 @@ import ru.rainman.data.local.entity.crossref.*
         EventLinkPreviewEntity::class,
         PostLinkPreviewEntity::class,
         FavoriteUserIdEntity::class,
-        WallRemoteKeyEntity::class
+        WallRemoteKeyEntity::class,
+        EventAttachmentEntity::class,
+        PostAttachmentEntity::class
     ],
     version = 1
 )

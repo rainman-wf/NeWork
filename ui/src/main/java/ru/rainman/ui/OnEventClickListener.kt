@@ -7,4 +7,5 @@ interface OnEventClickListener {
     fun onMoreClicked(eventId: Long)
     fun onAuthorClicked(eventId: Long)
     fun onEventClicked(eventId: Long)
+    fun onPlayClicked(uri: String)
 }

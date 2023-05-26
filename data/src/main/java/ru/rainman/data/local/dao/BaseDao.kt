@@ -1,6 +1,7 @@
 package ru.rainman.data.local.dao
 
 import androidx.room.*
+import ru.rainman.data.local.entity.AttachmentEntity
 
 interface BaseDao<E> {
 
@@ -23,3 +24,4 @@ interface BaseDao<E> {
     fun delete(obj: List<E>) : Int
 
 }
+

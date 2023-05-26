@@ -44,7 +44,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.activity:activity-ktx:1.7.1'
+    implementation 'androidx.activity:activity-ktx:1.7.2'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'androidx.fragment:fragment-ktx:1.5.7'
@@ -52,9 +52,9 @@ dependencies {
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.9'
 
     implementation 'com.github.bumptech.glide:recyclerview-integration:4.15.1'
-    implementation "androidx.media3:media3-exoplayer:1.0.1"
-    implementation "androidx.media3:media3-exoplayer-dash:1.0.1"
-    implementation "androidx.media3:media3-ui:1.0.1"
+    implementation "androidx.media3:media3-exoplayer:1.0.2"
+    implementation "androidx.media3:media3-exoplayer-dash:1.0.2"
+    implementation "androidx.media3:media3-ui:1.0.2"
 
     implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
 

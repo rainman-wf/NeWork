@@ -16,6 +16,12 @@ data class PostWithUsers(
     )
     val author: UserWithJob,
     @Relation(
+        entity = PostAttachmentEntity::class,
+        parentColumn = "post_id",
+        entityColumn = "post_id"
+    )
+    val attachment: PostAttachmentEntity?,
+    @Relation(
         parentColumn = "post_id",
         entityColumn = "post_id"
     )

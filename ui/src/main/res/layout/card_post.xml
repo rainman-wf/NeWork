@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="16dp"
+    android:layout_marginVertical="8dp"
     app:cardElevation="8dp">
 
     <LinearLayout
@@ -23,12 +23,12 @@
             layout="@layout/card_user_preview_base" />
 
         <ru.rainman.ui.view.AttachmentView
-            android:id="@+id/event_attachment"
+            android:id="@+id/attachment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:media_type="image"
             app:max_ratio="2.4"
-            app:min_ratio="0.77"
+            app:min_ratio="0.7"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView

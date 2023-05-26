@@ -27,7 +27,6 @@ val _usersS = (1..50).map {
     )
 }.toList()
 
-
 @HiltViewModel
 class EventEditorViewModel @Inject constructor(
     private val apiTestRepository: ApiTestRepository

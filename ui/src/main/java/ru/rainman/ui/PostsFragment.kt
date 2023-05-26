@@ -5,22 +5,34 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.rainman.domain.model.Attachment
+import ru.rainman.domain.model.Audio
+import ru.rainman.domain.model.Video
 import ru.rainman.ui.databinding.FragmentPostsBinding
+import ru.rainman.ui.helperutils.getNavController
+import ru.rainman.ui.helperutils.showVideoDialog
 import ru.rainman.ui.helperutils.snack
 
 @AndroidEntryPoint
 class PostsFragment : Fragment(R.layout.fragment_posts) {
 
     private val binding: FragmentPostsBinding by viewBinding(FragmentPostsBinding::bind)
+    private lateinit var navController: NavController
     private val viewModel: PostsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val adapter = PostsAdapter(object : OnPostClickListener {
+        navController =
+            requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
+
+        val parentFragment = requireParentFragment() as PagerFragment
+
+        val adapter = PostsAdapter(parentFragment.currentPlayedItem, object : OnPostClickListener {
             override fun onLikeClicked(postId: Long) {
                 snack("like $postId")
             }
@@ -41,7 +53,15 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
                 snack("post $postId")
             }
 
+            override fun onPlayClicked(postId: Long, attachment: Attachment) {
+                when (attachment) {
+                    is Video -> showVideoDialog(attachment.url)
+                    is Audio -> parentFragment.playAudio(attachment.url, PubType.POST, postId)
+                    else -> {}
+                }
+            }
         })
+
 
         binding.postList.adapter = adapter
 
@@ -51,4 +71,6 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
             }
         }
     }
+
+
 }

@@ -8,10 +8,16 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Post
 import ru.rainman.ui.databinding.CardPostBinding
 
 class PostsAdapter(
+    private val currentItemIsPLaying: SharedFlow<CurrentPlayedItemState?>,
     private val onPostClickListener: OnPostClickListener
 ) : PagingDataAdapter<Post, PostsAdapter.ViewHolder>(Diff()) {
 
@@ -39,8 +45,20 @@ class PostsAdapter(
                 content.text = post.content
 
                 post.attachment?.let {
-                    eventAttachment.setData(it.type, it.url)
-                } ?: eventAttachment.recycle()
+                    attachmentView.setData(it)
+                    attachmentView.setOnPlayClickListener {
+                        onPostClickListener.onPlayClicked(post.id, it)
+                    }
+                    CoroutineScope(Dispatchers.Default).launch {
+                        currentItemIsPLaying.collectLatest {item ->
+                            item?.let { item1 ->
+                                attachmentView.setAudioPlayed(
+                                    item1.id == post.id && item1.type == PubType.POST && item1.isPlaying
+                                )
+                            } ?: attachmentView.setAudioPlayed(false)
+                        }
+                    }
+                } ?: attachmentView.recycle()
 
                 like.isChecked = post.likedByMe
 

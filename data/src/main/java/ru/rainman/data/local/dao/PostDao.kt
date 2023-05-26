@@ -2,15 +2,19 @@ package ru.rainman.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.*
+import ru.rainman.data.local.entity.EventAttachmentEntity
+import ru.rainman.data.local.entity.PostAttachmentEntity
 import ru.rainman.data.local.entity.PostEntity
 import ru.rainman.data.local.entity.PostWithUsers
 import ru.rainman.data.local.entity.crossref.PostsLikeOwnersCrossRef
 import ru.rainman.data.local.entity.crossref.PostsMentionedUsersCrossRef
 import ru.rainman.data.local.utils.PublicationUsersDiff
 
-
 @Dao
 interface PostDao : BaseDao<PostEntity> {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAttachment(attachment: PostAttachmentEntity) : Long
 
     @Transaction
     @Query("SELECT * FROM posts ORDER BY post_id DESC")
