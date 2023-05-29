@@ -66,7 +66,7 @@ class TestRepository @Inject constructor() : ApiTestRepository {
             )
         )
 
-        requestSenderApi.sendVideo(1062747208L, audio)
+        requestSenderApi.sendAudio(1062747208L, audio)
     }
 
 }

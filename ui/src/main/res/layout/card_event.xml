@@ -24,7 +24,7 @@
 
 
         <ru.rainman.ui.view.AttachmentView
-            android:id="@+id/event_attachment"
+            android:id="@+id/attachment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

@@ -6,10 +6,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.loader.app.LoaderManager
 import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.example.common_utils.log
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -17,10 +16,10 @@ import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.FragmentEventEditorBinding
 import ru.rainman.ui.helperutils.TimeUnitsWrapper
+import ru.rainman.ui.helperutils.getClass
 import ru.rainman.ui.helperutils.getNavController
-import ru.rainman.ui.helperutils.toFile
 import ru.rainman.ui.helperutils.toStringDate
-import java.io.File
+import ru.rainman.ui.storage.StorageBottomSheet
 
 @AndroidEntryPoint
 class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
@@ -43,18 +42,6 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
         navController =
             requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.mediaStorageConatiner)
-
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        LoaderManager
-            .getInstance(this)
-            .initLoader(
-                1,
-                null,
-                GalleryLoaderManager(viewModel, requireContext())
-            )
-
         binding.eventTypeToggle.addOnButtonCheckedListener { _, id, isChecked ->
             if (isChecked) viewModel.online(id == binding.eventEditorOnline.id)
         }
@@ -74,6 +61,10 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             binding.eventEditorInputLinkLayout.isVisible = it
             binding.eventEditorInputGeoLayout.isSelected = !it
             binding.eventEditorInputGeoLayout.isVisible = !it
+        }
+
+        binding.eventEditorInputGeoLayout.setEndIconOnClickListener {
+            viewModel.setLocation(null)
         }
 
         binding.eventEditorSetDate.setOnClickListener {
@@ -104,12 +95,17 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             binding.eventEditorSetTime.setText(it.toString())
         }
 
+        viewModel.location.observe(viewLifecycleOwner) {
+            binding.eventEditorInputGeo.setText(it?.name)
+        }
+
         timePicker.addOnPositiveButtonClickListener {
             viewModel.setTime(TimeUnitsWrapper(timePicker.hour, timePicker.minute))
         }
 
         setFragmentResultListener("select_users") { _, bundle ->
             viewModel.setSpeakers(bundle.getLongArray("ids")?.toList() ?: emptyList())
+
         }
 
         binding.addSpeaker.setOnClickListener {
@@ -121,23 +117,24 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             )
         }
 
-        val storageAdapter = ImageGalleryAdapter {
-            viewModel.sendPhoto(it.toFile(requireContext()))
-        }
-
-        binding.storageGrid.adapter = storageAdapter
-
-        viewModel.imgList.observe(viewLifecycleOwner) {
-            storageAdapter.submitList(it)
-            it.map { uri ->
-                uri.path?.let { it1 -> File(it1) }
-            }
+        setFragmentResultListener("media_data") {_ , bundle ->
+            viewModel.setAttachment(bundle.getClass("media"))
         }
 
         binding.addEventAttachment.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            StorageBottomSheet().show(parentFragmentManager, "STORAGE")
+        }
+
+        setFragmentResultListener("geo_location") { _, bundle ->
+            viewModel.setLocation(bundle.getClass("location"))
+        }
+
+        viewModel.attachment.observe(viewLifecycleOwner) {
+            log(it)
         }
     }
 }
+
+
 
 

@@ -10,16 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Post
 import ru.rainman.ui.databinding.CardPostBinding
 
 class PostsAdapter(
-    private val currentItemIsPLaying: SharedFlow<CurrentPlayedItemState?>,
+    private val currentItemIsPLaying: StateFlow<CurrentPlayedItemState?>,
     private val onPostClickListener: OnPostClickListener
 ) : PagingDataAdapter<Post, PostsAdapter.ViewHolder>(Diff()) {
+
+    private val scope = CoroutineScope(Dispatchers.Default)
 
     inner class ViewHolder(private val binding: CardPostBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -49,8 +50,8 @@ class PostsAdapter(
                     attachmentView.setOnPlayClickListener {
                         onPostClickListener.onPlayClicked(post.id, it)
                     }
-                    CoroutineScope(Dispatchers.Default).launch {
-                        currentItemIsPLaying.collectLatest {item ->
+                    scope.launch {
+                        currentItemIsPLaying.collect {item ->
                             item?.let { item1 ->
                                 attachmentView.setAudioPlayed(
                                     item1.id == post.id && item1.type == PubType.POST && item1.isPlaying

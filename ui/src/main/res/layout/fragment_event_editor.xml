@@ -7,7 +7,6 @@
     android:orientation="vertical"
     tools:context=".EventEditorFragment">
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">
@@ -70,8 +69,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@animator/link_geo_input_anim"
-                    app:startIconDrawable="@drawable/web_link"
-                    app:endIconMode="clear_text">
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/web_link">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/event_editor_input_link"
@@ -88,15 +87,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:stateListAnimator="@animator/link_geo_input_anim"
-                    app:startIconDrawable="@drawable/location"
-                    app:endIconMode="clear_text">
+                    app:endIconDrawable="@drawable/close"
+                    app:endIconMode="custom"
+                    app:startIconDrawable="@drawable/location">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/event_editor_input_geo"
+                        style="@style/UneditableInputText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        style="@style/UneditableInputText"
                         android:hint="@string/geolocation"
                         android:maxLines="1" />
 
@@ -203,69 +203,14 @@
                 android:text="Add attachment"
                 app:icon="@drawable/add" />
 
+            <ru.rainman.ui.view.AttachmentView
+                android:id="@+id/attachment_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
 
-
     </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:id="@+id/media_storage_conatiner"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        style="@style/Widget.Material3.BottomSheet"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.Material3.BottomSheet.DragHandle" />
-
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/event_attachement_type_toggle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:checkedButton="@+id/event_editor_online"
-            app:selectionRequired="true"
-            app:singleSelection="true"
-            android:layout_marginHorizontal="8dp">
-
-            <Button
-                android:id="@+id/attachment_type_image"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Image" />
-
-            <Button
-                android:id="@+id/attachment_type_audio"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Audio" />
-
-            <Button
-                android:id="@+id/attachment_type_video"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Video" />
-
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:padding="4dp"
-            android:id="@+id/storage_grid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="3"
-            tools:listitem="@layout/card_storage_image_item"/>
-
-    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/save_event"

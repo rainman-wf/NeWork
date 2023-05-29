@@ -7,10 +7,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.rainman.domain.model.Attachment
+import ru.rainman.domain.model.Audio
+import ru.rainman.domain.model.Video
 import ru.rainman.ui.databinding.FragmentEventsBinding
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.showVideoDialog
@@ -19,48 +21,59 @@ import ru.rainman.ui.helperutils.snack
 @AndroidEntryPoint
 class EventsFragment : Fragment(R.layout.fragment_events) {
 
-    private val binding: FragmentEventsBinding by viewBinding (FragmentEventsBinding::bind)
+    private val binding: FragmentEventsBinding by viewBinding(FragmentEventsBinding::bind)
     private lateinit var navController: NavController
     private val viewModel: EventsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        navController = requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
+        navController =
+            requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
 
         binding.newEvent.setOnClickListener {
             navController.navigate(MainFragmentDirections.actionMainFragmentToEventEditorFragment())
         }
 
-        val adapter = EventsAdapter (object : OnEventClickListener {
-            override fun onLikeClicked(eventId: Long) {
-                viewModel.like(eventId)
-            }
+        val parentFragment = requireParentFragment() as PagerFragment
 
-            override fun onParticipateClicked(eventId: Long) {
-               viewModel.participate(eventId)
-            }
+        val adapter =
+            EventsAdapter(parentFragment.currentPlayedItem, object : OnEventClickListener {
+                override fun onLikeClicked(eventId: Long) {
+                    viewModel.like(eventId)
+                }
 
-            override fun onShareClicked(eventId: Long) {
-                snack("share $eventId")
-            }
+                override fun onParticipateClicked(eventId: Long) {
+                    viewModel.participate(eventId)
+                }
 
-            override fun onMoreClicked(eventId: Long) {
-                snack("more $eventId")
-            }
+                override fun onShareClicked(eventId: Long) {
+                    snack("share $eventId")
+                }
 
-            override fun onAuthorClicked(eventId: Long) {
-                snack("author $eventId")
-            }
+                override fun onMoreClicked(eventId: Long) {
+                    snack("more $eventId")
+                }
 
-            override fun onEventClicked(eventId: Long) {
-                snack("event $eventId")
-            }
+                override fun onAuthorClicked(eventId: Long) {
+                    snack("author $eventId")
+                }
 
-            override fun onPlayClicked(uri: String) {
-                showVideoDialog(uri)
-            }
+                override fun onEventClicked(eventId: Long) {
+                    snack("event $eventId")
+                }
 
-        })
+                override fun onPlayClicked(postId: Long, attachment: Attachment) {
+                    when (attachment) {
+                        is Video -> {
+                            parentFragment.stopAudio()
+                            showVideoDialog(attachment.url)
+                        }
+                        is Audio -> parentFragment.playAudio(attachment.url, PubType.EVENT, postId)
+                        else -> {}
+                    }
+                }
+
+            })
 
         binding.eventList.adapter = adapter
 

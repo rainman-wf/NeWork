@@ -2,20 +2,15 @@ package ru.rainman.ui.helperutils
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
-import ru.rainman.domain.model.geo.BusinessObjectData
-import ru.rainman.domain.model.geo.GeoObject
-import ru.rainman.domain.model.geo.Geometry
-import ru.rainman.domain.model.geo.Point
-import ru.rainman.domain.model.geo.SearchResult
-import ru.rainman.domain.model.geo.ToponymObjectData
+import java.io.Serializable
 import ru.rainman.ui.VideoPlayerDialogFragment
 import java.io.File
 import java.text.DecimalFormat
@@ -71,3 +66,11 @@ fun Fragment.showVideoDialog(uri: String) {
     dialog.show(parentFragmentManager, null)
 }
 
+@Suppress("DEPRECATION")
+inline fun <reified T : Serializable> Bundle.getClass(key: String): T? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getSerializable(key, T::class.java)
+    } else {
+        getSerializable(key) as? T
+    }
+}

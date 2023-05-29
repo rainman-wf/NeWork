@@ -55,7 +55,10 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
             override fun onPlayClicked(postId: Long, attachment: Attachment) {
                 when (attachment) {
-                    is Video -> showVideoDialog(attachment.url)
+                    is Video -> {
+                        parentFragment.stopAudio()
+                        showVideoDialog(attachment.url)
+                    }
                     is Audio -> parentFragment.playAudio(attachment.url, PubType.POST, postId)
                     else -> {}
                 }

@@ -7,10 +7,16 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Event
 import ru.rainman.ui.databinding.CardEventBinding
 
 class EventsAdapter(
+    private val currentItemIsPLaying: SharedFlow<CurrentPlayedItemState?>,
     private val onEventClickListener: OnEventClickListener
 ) : PagingDataAdapter<Event, EventsAdapter.ViewHolder>(Diff()) {
 
@@ -39,11 +45,20 @@ class EventsAdapter(
                 content.text = event.content
 
                 event.attachment?.let {
-                    eventAttachment.setData(it)
-                    eventAttachment.setOnPlayClickListener {
-                        onEventClickListener.onPlayClicked(it.url)
+                    attachmentView.setData(it)
+                    attachmentView.setOnPlayClickListener {
+                        onEventClickListener.onPlayClicked(event.id, it)
                     }
-                } ?: eventAttachment.recycle()
+                    CoroutineScope(Dispatchers.Default).launch {
+                        currentItemIsPLaying.collectLatest {item ->
+                            item?.let { item1 ->
+                                attachmentView.setAudioPlayed(
+                                    item1.id == event.id && item1.type == PubType.EVENT && item1.isPlaying
+                                )
+                            } ?: attachmentView.setAudioPlayed(false)
+                        }
+                    }
+                } ?: attachmentView.recycle()
 
                 like.isChecked = event.likedByMe
                 participate.isChecked = event.participatedByMe

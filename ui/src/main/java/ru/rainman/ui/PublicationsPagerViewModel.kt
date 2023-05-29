@@ -24,7 +24,6 @@ class PublicationsPagerViewModel @Inject constructor() : ViewModel() {
         _currentPlayedItemState.value?.let {
             _currentPlayedItemState.postValue(it.copy(isPlaying = value))
         }
-
     }
 }
 

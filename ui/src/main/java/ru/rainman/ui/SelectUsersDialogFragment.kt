@@ -57,8 +57,6 @@ class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select
 
         viewModel.filterState.observe(viewLifecycleOwner) {
 
-            log(it)
-
             binding.userSelectToolbar.menu.apply {
                 getItem(0).isChecked = it.favorite
                 getItem(

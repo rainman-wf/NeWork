@@ -1,5 +1,7 @@
 package ru.rainman.ui
 
+import ru.rainman.domain.model.Attachment
+
 interface OnEventClickListener {
     fun onLikeClicked(eventId: Long)
     fun onParticipateClicked(eventId: Long)
@@ -7,5 +9,5 @@ interface OnEventClickListener {
     fun onMoreClicked(eventId: Long)
     fun onAuthorClicked(eventId: Long)
     fun onEventClicked(eventId: Long)
-    fun onPlayClicked(uri: String)
+    fun onPlayClicked(postId: Long, attachment: Attachment)
 }

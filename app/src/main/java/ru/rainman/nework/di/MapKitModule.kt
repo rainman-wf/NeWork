@@ -1,5 +1,6 @@
 package ru.rainman.nework.di
 
+
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
 import dagger.Module

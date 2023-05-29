@@ -5,13 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.chip.Chip
-import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
+import ru.rainman.domain.model.Attachment
 import ru.rainman.domain.model.User
 import ru.rainman.domain.repository.ApiTestRepository
+import ru.rainman.ui.helperutils.MediaType
+import ru.rainman.ui.helperutils.SimpleAttachment
+import ru.rainman.ui.helperutils.SimpleLocation
 import ru.rainman.ui.helperutils.TimeUnitsWrapper
 import java.io.File
 import javax.inject.Inject
@@ -44,8 +45,11 @@ class EventEditorViewModel @Inject constructor(
     private val _speakers = MutableLiveData<List<User>>()
     val speakers: LiveData<List<User>> get() = _speakers
 
-    private val _imgList = MutableLiveData<List<Uri>>(emptyList())
-    val imgList: LiveData<List<Uri>> get() = _imgList
+    private val _location = MutableLiveData<SimpleLocation?>(null)
+    val location: LiveData<SimpleLocation?> get() = _location
+
+    private val _attachment = MutableLiveData<SimpleAttachment?>()
+    val attachment: LiveData<SimpleAttachment?> get() = _attachment
 
     fun online (value: Boolean) = _isOnline.postValue(value)
     fun setDate(value: Long?) = _date.postValue(value)
@@ -53,10 +57,6 @@ class EventEditorViewModel @Inject constructor(
 
     fun setSpeakers(ids: List<Long>) {
         _speakers.postValue(_usersS.filter { ids.contains(it.id) })
-    }
-
-    fun loadGallery(list: List<Uri>) {
-        _imgList.postValue(list)
     }
 
     fun sendPhoto(file: File) {
@@ -75,6 +75,14 @@ class EventEditorViewModel @Inject constructor(
         viewModelScope.launch {
             apiTestRepository.sendAudio(file)
         }
+    }
+
+    fun setLocation(simpleLocation: SimpleLocation?) {
+        _location.postValue(simpleLocation)
+    }
+
+    fun setAttachment(simpleAttachment: SimpleAttachment?) {
+        _attachment.postValue(simpleAttachment)
     }
 
 }
