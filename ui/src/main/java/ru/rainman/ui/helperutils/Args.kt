@@ -1,4 +1,4 @@
-package ru.rainman.ui
+package ru.rainman.ui.helperutils
 
 enum class Args {
         PUBLICATIONS, USERS

@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.media3.common.MediaItem
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.rainman.ui.databinding.DialogFragmentVideoPlayerBinding
+import ru.rainman.ui.helperutils.PlayerHolder
 
 class VideoPlayerDialogFragment : DialogFragment(R.layout.dialog_fragment_video_player) {
 

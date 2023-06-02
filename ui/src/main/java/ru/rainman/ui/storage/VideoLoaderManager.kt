@@ -5,13 +5,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.loader.content.Loader
+import ru.rainman.domain.model.Attachment
 import ru.rainman.ui.storage.abstractions.MediaLoadManager
-import ru.rainman.ui.storage.abstractions.StorageItem
 
 class VideoLoaderManager(
     viewModel: VideoStorageViewModel,
     context: Context
-) : MediaLoadManager<StorageItem.Video>(context, viewModel) {
+) : MediaLoadManager<Attachment.Video>(context, viewModel) {
 
     override val projection = listOf(
         MediaStore.Video.Media._ID,
@@ -31,7 +31,7 @@ class VideoLoaderManager(
                     it.getString(idColumn)
                 )
                 val duration = it.getInt(durationColumn)
-                resultList.add(StorageItem.Video(uri,duration))
+                resultList.add(Attachment.Video(uri.toString(),duration, 1.77f))
             }
         }
         loadData(resultList)

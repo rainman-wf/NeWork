@@ -11,9 +11,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Attachment
-import ru.rainman.domain.model.Audio
-import ru.rainman.domain.model.Video
 import ru.rainman.ui.databinding.FragmentEventsBinding
+import ru.rainman.ui.helperutils.PubType
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.showVideoDialog
 import ru.rainman.ui.helperutils.snack
@@ -64,11 +63,11 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
 
                 override fun onPlayClicked(postId: Long, attachment: Attachment) {
                     when (attachment) {
-                        is Video -> {
+                        is Attachment.Video -> {
                             parentFragment.stopAudio()
-                            showVideoDialog(attachment.url)
+                            showVideoDialog(attachment.uri)
                         }
-                        is Audio -> parentFragment.playAudio(attachment.url, PubType.EVENT, postId)
+                        is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.EVENT, postId)
                         else -> {}
                     }
                 }

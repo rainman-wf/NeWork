@@ -18,7 +18,7 @@ interface UserDao : BaseDao<UserEntity> {
 
     @Transaction
     @Query("SELECT * FROM users")
-    suspend fun getAll(): List<UserWithJob>
+    fun getAll(): Flow<List<UserWithJob>>
 
     @Transaction
     @Query("SELECT * FROM users WHERE user_id = :userId")
@@ -30,6 +30,7 @@ interface UserDao : BaseDao<UserEntity> {
 
     @Query("SELECT user_id FROM users")
     suspend fun getIds(): List<Long>
+
 
     @Query("UPDATE users SET job_id = :value WHERE user_id = :userId")
     suspend fun updateJobId(userId: Long, value: Long)

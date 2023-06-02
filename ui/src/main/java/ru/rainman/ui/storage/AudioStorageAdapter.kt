@@ -1,19 +1,18 @@
 package ru.rainman.ui.storage
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import ru.rainman.domain.model.Attachment
 import ru.rainman.ui.databinding.CardStorageAudioItemBinding
 import ru.rainman.ui.helperutils.asDuration
 import ru.rainman.ui.storage.abstractions.StorageAdapter
-import ru.rainman.ui.storage.abstractions.StorageItem
 
 class AudioStorageAdapter(
-    onItemClicked: (Uri) -> Unit
-) : StorageAdapter<StorageItem.Audio, CardStorageAudioItemBinding>(
+    onItemClicked: (Attachment) -> Unit
+) : StorageAdapter<Attachment.Audio, CardStorageAudioItemBinding>(
     onItemClicked, {
         play.setOnClickListener { _ ->
-            onItemClicked(it.uri)
+            onItemClicked(it)
         }
         artist.text = if (it.artist == "<unknown>") "Unknown artist" else it.artist
         title.text = it.title

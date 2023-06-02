@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.rainman.ui.databinding.CardSelectableUserBinding
 import ru.rainman.ui.helperutils.SelectableUser
 
@@ -20,6 +21,14 @@ class SelectableUserAdapter (private val onItemClickListener: (SelectableUser) -
             binding.selectedUser.isChecked = user.selected
             binding.root.setOnClickListener {
                 onItemClickListener(user)
+            }
+            user.user.avatar?.let {
+                Glide.with(binding.root)
+                    .load(it)
+                    .circleCrop()
+                    .placeholder(R.drawable.avatar_empty)
+                    .error(R.drawable.avatar_stub)
+                    .into(binding.selectableAvatar)
             }
         }
     }

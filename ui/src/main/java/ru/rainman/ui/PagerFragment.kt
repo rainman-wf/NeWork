@@ -10,15 +10,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.navigation.fragment.navArgs
-import com.example.common_utils.log
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.rainman.ui.Args.*
+import ru.rainman.nework.ui.users.UserListArg
+import ru.rainman.ui.helperutils.Args.*
 import ru.rainman.ui.databinding.FragmentPagerBinding
+import ru.rainman.ui.helperutils.CurrentPlayedItemState
+import ru.rainman.ui.helperutils.PlayerHolder
+import ru.rainman.ui.helperutils.PubType
 
 @AndroidEntryPoint
 class PagerFragment : Fragment(R.layout.fragment_pager) {
@@ -106,8 +109,8 @@ class PagerFragment : Fragment(R.layout.fragment_pager) {
                 )
 
                 USERS -> listOf(
-                    UsersFragment(),
-                    UsersFragment()
+                    UsersFragment.newInstance(UserListArg.ALL),
+                    UsersFragment.newInstance(UserListArg.FAVORITE)
                 )
             }
 

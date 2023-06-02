@@ -6,14 +6,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.common_utils.log
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.FragmentStorageListBinding
-import ru.rainman.ui.helperutils.MediaType
+import ru.rainman.ui.storage.abstractions.AttachmentSingleEvent
 
 @AndroidEntryPoint
 class AudioStorageFragment : Fragment(R.layout.fragment_storage_list) {
+
 
     private val viewModel: AudioStorageViewModel by viewModels()
     private lateinit var binding: FragmentStorageListBinding
@@ -33,13 +33,12 @@ class AudioStorageFragment : Fragment(R.layout.fragment_storage_list) {
             )
 
         val adapter = AudioStorageAdapter {
-            (requireParentFragment() as StorageBottomSheet).setUri(it, MediaType.AUDIO)
+            AttachmentSingleEvent.value.postValue(it)
         }
 
         binding.storageGrid.adapter = adapter
 
         viewModel.data.observe(viewLifecycleOwner) {
-            log(it)
             adapter.submitList(it)
         }
     }

@@ -5,13 +5,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.loader.content.Loader
+import ru.rainman.domain.model.Attachment
 import ru.rainman.ui.storage.abstractions.MediaLoadManager
-import ru.rainman.ui.storage.abstractions.StorageItem
 
 class AudioLoaderManager(
     viewModel: AudioStorageViewModel,
     context: Context
-) : MediaLoadManager<StorageItem.Audio>(context, viewModel) {
+) : MediaLoadManager<Attachment.Audio>(context, viewModel) {
 
     override val projection = listOf(
         MediaStore.Audio.Media._ID,
@@ -40,7 +40,7 @@ class AudioLoaderManager(
                 val artist = it.getString(artistColumn)
                 val title = it.getString(titleColumn)
 
-                resultList.add(StorageItem.Audio(uri, duration, artist, title))
+                resultList.add(Attachment.Audio(uri.toString(), duration, artist, title))
             }
         }
         loadData(resultList.reversed())

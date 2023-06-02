@@ -1,40 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".LoginDialogFragment"
-    android:layout_marginVertical="32dp"
-    android:layout_marginHorizontal="16dp">
+    android:padding="24dp"
+    tools:context=".LoginDialogFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginVertical="16dp"
+        android:id="@+id/login_input_login_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_input_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:maxLength="16"
             android:hint="@string/login" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginVertical="16dp"
+        android:id="@+id/login_input_password_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        app:errorEnabled="true"
+        app:endIconMode="password_toggle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_input_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/password"
+            android:maxLength="16"
             android:inputType="textPassword"
-            tools:text ="@string/password"
-            android:drawableEnd="@drawable/visibility_selectable"/>
+            tools:text="@string/password" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+<!--        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_neutral"
+            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registration" />-->
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_negative"
+            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_positive"
+            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login" />
+
+
+    </LinearLayout>
 
 </LinearLayout>

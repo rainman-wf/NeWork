@@ -47,6 +47,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.geo.ToponymObjectData
+import ru.rainman.ui.EventEditorFragment.Companion.KEY_LOCATION
+import ru.rainman.ui.EventEditorFragment.Companion.EVENT_LOCATION_REQUEST_KEY
 import ru.rainman.ui.helperutils.SimpleLocation
 import ru.rainman.ui.helperutils.getNavController
 
@@ -177,8 +179,8 @@ class MapFragment : Fragment(R.layout.fragment_map), GeoObjectTapListener, Input
                 )
             }
 
-            bundle.putSerializable("location", simpleLocation)
-            setFragmentResult("geo_location", bundle)
+            bundle.putSerializable(KEY_LOCATION, simpleLocation)
+            setFragmentResult(EVENT_LOCATION_REQUEST_KEY, bundle)
             navController.navigateUp()
         }
 

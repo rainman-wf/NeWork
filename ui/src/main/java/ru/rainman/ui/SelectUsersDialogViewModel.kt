@@ -4,18 +4,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.rainman.domain.model.User
+import ru.rainman.domain.repository.UserRepository
 import ru.rainman.ui.helperutils.SelectableUser
 import javax.inject.Inject
 
 @HiltViewModel
-class SelectUsersDialogViewModel @Inject constructor() : ViewModel() {
+class SelectUsersDialogViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private val _filterState = MutableLiveData(UsersFilter(false, null, null))
     val filterState: LiveData<UsersFilter> get() = _filterState
 
-    private val _users = MutableLiveData(_usersS)
+    private val _users = userRepository.flowableUsers.asLiveData(viewModelScope.coroutineContext)
 
     private val _selectedIds = MutableLiveData(setOf<Long>())
     val selectedIds: List<Long> get() = _selectedIds.value?.toList() ?: listOf()

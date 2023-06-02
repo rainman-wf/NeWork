@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Event
 import ru.rainman.ui.databinding.CardEventBinding
+import ru.rainman.ui.helperutils.CurrentPlayedItemState
+import ru.rainman.ui.helperutils.PubType
 
 class EventsAdapter(
     private val currentItemIsPLaying: SharedFlow<CurrentPlayedItemState?>,

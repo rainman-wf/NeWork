@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_mainFragment_to_postsFragment"
             app:destination="@id/postsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_loginDialogFragment"
+            app:destination="@id/loginDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventEditorFragment"
@@ -81,4 +84,9 @@
             android:name="ids"
             app:argType="long[]" />
     </dialog>
+    <dialog
+        android:id="@+id/loginDialogFragment"
+        android:name="ru.rainman.ui.LoginDialogFragment"
+        android:label="dialog_fragment_login"
+        tools:layout="@layout/dialog_fragment_login" />
 </navigation>

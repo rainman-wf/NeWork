@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <item-->
+<!--        android:id="@+id/auth"-->
+<!--        android:icon="@drawable/avatar_stub_large"-->
+<!--        android:title="Auth"-->
+<!--        app:showAsAction="ifRoom">-->
+<!--        <menu>-->
+            <group
+                android:id="@+id/authenticated">
+                <item
+                    android:id="@+id/logout"
+                    android:title="Logout" />
+            </group>
+            <group
+                android:id="@+id/unauthenticated">
+                <item
+                    android:id="@+id/login"
+                    android:title="Login" />
+                <item
+                    android:id="@+id/reg"
+                    android:title="Registration" />
+            </group>
+<!--        </menu>-->
+<!--    </item>-->
+
+</menu>

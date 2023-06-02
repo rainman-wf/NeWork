@@ -7,11 +7,12 @@ import ru.rainman.data.remote.response.Coordinates
 data class EventCreateRequest(
     val id: Int,
     val content: String?,
+    @SerializedName("datetime")
     val dateTime: String?,
     @SerializedName("coords")
     val coordinates: Coordinates?,
     val type: String,
     val attachment: Attachment?,
     val link: String?,
-    val speakerIds: List<Int>
+    val speakerIds: List<Long>
 )

@@ -1,4 +1,4 @@
-package ru.rainman.ui
+package ru.rainman.ui.helperutils
 
 import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer

@@ -9,13 +9,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.FragmentStorageListBinding
-import ru.rainman.ui.helperutils.MediaType
+import ru.rainman.ui.storage.abstractions.AttachmentSingleEvent
 
 @AndroidEntryPoint
 class ImageStorageFragment : Fragment(R.layout.fragment_storage_list) {
 
     private val viewModel: ImageStorageViewModel by viewModels()
     private lateinit var binding: FragmentStorageListBinding
+    private lateinit var adapter: ImageStorageAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,8 +32,8 @@ class ImageStorageFragment : Fragment(R.layout.fragment_storage_list) {
                 ImageLoaderManager(viewModel, requireContext())
             )
 
-        val adapter = ImageStorageAdapter {
-            (requireParentFragment() as StorageBottomSheet).setUri(it, MediaType.IMAGE)
+        adapter = ImageStorageAdapter {
+            AttachmentSingleEvent.value.postValue(it)
         }
 
         binding.storageGrid.adapter = adapter
@@ -41,5 +42,5 @@ class ImageStorageFragment : Fragment(R.layout.fragment_storage_list) {
             adapter.submitList(it)
         }
     }
-
 }
+

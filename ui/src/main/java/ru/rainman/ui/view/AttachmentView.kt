@@ -18,9 +18,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import ru.rainman.domain.model.Attachment
-import ru.rainman.domain.model.Audio
-import ru.rainman.domain.model.Image
-import ru.rainman.domain.model.Video
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.ViewAttachmentBinding
 import ru.rainman.ui.helperutils.asDuration
@@ -87,8 +84,8 @@ class AttachmentView(
         binding.playable.isVisible = false
         binding.image.isVisible = true
         binding.title.isVisible = false
-        (attachment as Image).let {
-            binding.image.loadBitmap(it.url, R.drawable.image)
+        (attachment as Attachment.Image).let {
+            binding.image.loadBitmap(it.uri, R.drawable.image)
         }
         resetMediaMetadata()
     }
@@ -99,7 +96,7 @@ class AttachmentView(
         binding.image.isVisible = false
         binding.title.isVisible = true
 
-        (attachment as Audio).let {
+        (attachment as Attachment.Audio).let {
             binding.title.text = buildTitle(it.artist, it.title)
             binding.duration.text = it.duration.asDuration()
         }
@@ -123,12 +120,12 @@ class AttachmentView(
         binding.playable.isVisible = true
         binding.image.isVisible = true
         binding.title.isVisible = false
-        (attachment as Video).let {
+        (attachment as Attachment.Video).let {
             binding.image.updateLayoutParams<LayoutParams> {
                 dimensionRatio = it.ratio.toString()
             }
             Glide.with(binding.root.context)
-                .load(it.url)
+                .load(it.uri)
                 .placeholder(R.drawable.outline_ondemand_video_24)
                 .error(R.drawable.outline_ondemand_video_24)
                 .into(binding.image)
@@ -150,9 +147,9 @@ class AttachmentView(
 
     private fun setType() {
         when (attachment) {
-            is Video -> setVideo()
-            is Audio -> setAudio()
-            is Image -> setImage()
+            is Attachment.Video -> setVideo()
+            is Attachment.Audio -> setAudio()
+            is Attachment.Image -> setImage()
             null -> recycle()
         }
     }
@@ -171,7 +168,7 @@ class AttachmentView(
 
     private fun setPlayButtonPosition() {
         when (attachment) {
-            is Audio -> {
+            is Attachment.Audio -> {
                 binding.play.updateLayoutParams<LayoutParams> {
                     endToEnd = LayoutParams.UNSET
                 }
@@ -181,7 +178,7 @@ class AttachmentView(
                 }
             }
 
-            is Video -> {
+            is Attachment.Video -> {
                 binding.play.updateLayoutParams<LayoutParams> {
                     endToEnd = LayoutParams.PARENT_ID
                 }

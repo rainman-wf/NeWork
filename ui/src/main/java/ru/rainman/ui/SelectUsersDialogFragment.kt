@@ -11,7 +11,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.example.common_utils.log
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.DialogFragmentSelectUsersBinding
 import ru.rainman.ui.helperutils.menuItemHandle
@@ -30,14 +29,17 @@ class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select
         builder.setView(binding.root)
             .setPositiveButton("Done") { _, _ ->
                 val bundle = Bundle()
-                bundle.putLongArray("ids", viewModel.selectedIds.toLongArray())
-                setFragmentResult("select_users", bundle)
+                bundle.putLongArray(
+                    EventEditorFragment.KEY_SPEAKERS,
+                    viewModel.selectedIds.toLongArray()
+                )
+                setFragmentResult(EventEditorFragment.EVENT_SPEAKERS_REQUEST_KEY, bundle)
             }
 
             .setNegativeButton("Cansel") { _, _ ->
                 val bundle = Bundle()
-                bundle.putLongArray("ids", args.ids)
-                setFragmentResult("select_users", bundle)
+                bundle.putLongArray(EventEditorFragment.KEY_SPEAKERS, args.ids)
+                setFragmentResult(EventEditorFragment.EVENT_SPEAKERS_REQUEST_KEY, bundle)
             }
         return builder.create()
     }

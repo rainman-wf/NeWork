@@ -3,11 +3,14 @@ package ru.rainman.data.impl
 import com.example.common_utils.toDateTime
 import ru.rainman.data.local.entity.*
 import ru.rainman.data.local.entity.crossref.*
+import ru.rainman.data.remote.request.EventCreateRequest
 import ru.rainman.data.remote.response.*
 import ru.rainman.data.remote.response.Coordinates
+import ru.rainman.domain.dto.NewEventDto
 import ru.rainman.domain.model.*
+import ru.rainman.domain.model.Attachment
 import ru.rainman.domain.model.Coordinates as CoordinatesModel
-import ru.rainman.domain.model.Attachment as AttachmentModel
+import ru.rainman.data.remote.response.Attachment as AttachmentRequestBody
 
 fun UserWithJob.toModel() = User(
     id = userEntity.userId,
@@ -82,11 +85,11 @@ fun Coordinates.toModel() = CoordinatesModel(
     longitude = longitude.toDouble()
 )
 
-fun AttachmentEntity.toModel() : AttachmentModel {
-    return when(this.type) {
-        AttachmentType.IMAGE -> Image(url, 1.7f)
-        AttachmentType.VIDEO -> Video(url, duration!!, ratio!!)
-        AttachmentType.AUDIO -> Audio(url, duration!!, artist!!, title!!)
+fun AttachmentEntity.toModel(): Attachment {
+    return when (this.type) {
+        AttachmentType.IMAGE -> Attachment.Image(url, 1.7f)
+        AttachmentType.VIDEO -> Attachment.Video(url, duration!!, ratio!!)
+        AttachmentType.AUDIO -> Attachment.Audio(url, duration!!, artist!!, title!!)
     }
 }
 
@@ -176,3 +179,21 @@ fun PublicationLinkPreviewEntity.toModel() = LinkPreview(
     image = linkPreview.image,
     siteName = linkPreview.siteName,
 )
+
+fun NewEventDto.toRequestBody(attachment: AttachmentRequestBody? = null) = EventCreateRequest(
+    id = 0,
+    content = content,
+    dateTime = dateTime.toString(),
+    coordinates = coordinates?.let {
+        Coordinates(
+            it.latitude.toString().take(8),
+            it.longitude.toString().take(8)
+        )
+    },
+    type = type!!.name,
+    attachment = attachment,
+    link = link,
+    speakerIds = speakerIds
+)
+
+

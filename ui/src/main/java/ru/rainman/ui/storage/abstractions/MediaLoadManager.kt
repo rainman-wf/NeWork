@@ -7,8 +7,9 @@ import android.os.Bundle
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
+import ru.rainman.domain.model.Attachment
 
-abstract class MediaLoadManager<T : StorageItem>(
+abstract class MediaLoadManager<T : Attachment>(
     private val context: Context,
     private val viewModel: StorageViewModel<T>
 ) : LoaderManager.LoaderCallbacks<Cursor> {

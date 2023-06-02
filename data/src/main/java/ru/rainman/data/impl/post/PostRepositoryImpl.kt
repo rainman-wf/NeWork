@@ -29,7 +29,7 @@ class PostRepositoryImpl @Inject constructor(
         postsPagedData.setWallOwnerId(userId)
     }
 
-    override suspend fun create(newObjectDto: NewPostDto) {
+    override suspend fun create(newObjectDto: NewPostDto): Post? {
         TODO("Not yet implemented")
     }
 

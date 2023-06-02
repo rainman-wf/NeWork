@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:titleCentered="true"
-            tools:title="Title" />
+            tools:title="Title"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -34,7 +34,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:menu="@menu/main_nav_menu">
+        app:menu="@menu/main_nav_menu"
+        android:elevation="16dp">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

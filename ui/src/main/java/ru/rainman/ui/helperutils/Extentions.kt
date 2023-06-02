@@ -4,12 +4,14 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
+import ru.rainman.domain.model.UploadMedia
 import java.io.Serializable
 import ru.rainman.ui.VideoPlayerDialogFragment
 import java.io.File
@@ -42,6 +44,21 @@ fun Uri.toFile(context: Context): File {
     return file
 }
 
+fun Uri.toUploadMedia(context: Context): UploadMedia {
+
+    val stream = context.contentResolver.openInputStream(this)
+    val byteArray = stream?.readBytes()?.toList()
+
+    stream?.close()
+
+    val cursor = context.contentResolver.query(this, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
+    val name = if (cursor != null && cursor.moveToFirst()) cursor.getString(0) else "file"
+
+    cursor?.close()
+
+    return UploadMedia(byteArray!!, name)
+}
+
 fun Fragment.snack(msg: String) {
     Snackbar.make(this.requireView(), msg, Snackbar.LENGTH_SHORT).show()
 }
@@ -67,7 +84,7 @@ fun Fragment.showVideoDialog(uri: String) {
 }
 
 @Suppress("DEPRECATION")
-inline fun <reified T : Serializable> Bundle.getClass(key: String): T? {
+inline fun <reified T : Serializable> Bundle.getObject(key: String): T? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getSerializable(key, T::class.java)
     } else {

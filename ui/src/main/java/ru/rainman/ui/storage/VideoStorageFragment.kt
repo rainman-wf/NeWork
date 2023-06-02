@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.FragmentStorageListBinding
-import ru.rainman.ui.helperutils.MediaType
+import ru.rainman.ui.storage.abstractions.AttachmentSingleEvent
 
 @AndroidEntryPoint
 class VideoStorageFragment : Fragment(R.layout.fragment_storage_list) {
+
 
     private val viewModel: VideoStorageViewModel by viewModels()
     private lateinit var binding: FragmentStorageListBinding
@@ -32,7 +33,7 @@ class VideoStorageFragment : Fragment(R.layout.fragment_storage_list) {
             )
 
         val adapter = VideoStorageAdapter {
-            (requireParentFragment() as StorageBottomSheet).setUri(it, MediaType.VIDEO)
+            AttachmentSingleEvent.value.postValue(it)
         }
 
         binding.storageGrid.adapter = adapter
@@ -41,6 +42,7 @@ class VideoStorageFragment : Fragment(R.layout.fragment_storage_list) {
             adapter.submitList(it)
         }
     }
+
 }
 
 

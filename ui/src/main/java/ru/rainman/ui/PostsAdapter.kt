@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Post
 import ru.rainman.ui.databinding.CardPostBinding
+import ru.rainman.ui.helperutils.CurrentPlayedItemState
+import ru.rainman.ui.helperutils.PubType
 
 class PostsAdapter(
     private val currentItemIsPLaying: StateFlow<CurrentPlayedItemState?>,

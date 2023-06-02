@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.rainman.ui.helperutils.CurrentPlayedItemState
+import ru.rainman.ui.helperutils.PubType
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,12 +29,3 @@ class PublicationsPagerViewModel @Inject constructor() : ViewModel() {
     }
 }
 
-enum class PubType {
-    POST, EVENT
-}
-
-data class CurrentPlayedItemState(
-    val type: PubType,
-    val id: Long,
-    val isPlaying: Boolean
-)
