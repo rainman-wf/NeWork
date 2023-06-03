@@ -83,6 +83,9 @@
         <argument
             android:name="ids"
             app:argType="long[]" />
+        <argument
+            android:name="editable_type"
+            app:argType="ru.rainman.ui.helperutils.PubType" />
     </dialog>
     <dialog
         android:id="@+id/loginDialogFragment"

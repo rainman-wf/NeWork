@@ -17,7 +17,6 @@ import ru.rainman.ui.helperutils.snack
 @AndroidEntryPoint
 class LoginDialogFragment : DialogFragment(R.layout.dialog_fragment_login) {
 
-    private lateinit var binding: DialogFragmentLoginBinding
     private val viewModel: LoginDialogViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -38,20 +37,23 @@ class LoginDialogFragment : DialogFragment(R.layout.dialog_fragment_login) {
 
 
 
-            when  {
+            when {
                 invalidPassword && invalidLogin -> {
                     binding.loginInputLoginLayout.error = "Required field"
                     binding.loginInputPasswordLayout.error = "Required field"
                     binding.loginInputLogin.requestFocus()
                 }
+
                 invalidLogin -> {
                     binding.loginInputLoginLayout.error = "Required field"
                     binding.loginInputLogin.requestFocus()
                 }
+
                 invalidPassword -> {
                     binding.loginInputPasswordLayout.error = "Required field"
                     binding.loginInputPassword.requestFocus()
                 }
+
                 else -> viewModel.login(login.toString(), password.toString())
             }
         }
@@ -60,7 +62,7 @@ class LoginDialogFragment : DialogFragment(R.layout.dialog_fragment_login) {
             dismiss()
         }
 
-        binding.loginInputLogin.addTextChangedListener (object  : TextWatcher {
+        binding.loginInputLogin.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -73,13 +75,17 @@ class LoginDialogFragment : DialogFragment(R.layout.dialog_fragment_login) {
 
         })
 
-        binding.loginInputPassword.addTextChangedListener (object  : TextWatcher {
+        binding.loginInputPassword.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!s.isNullOrBlank()) binding.loginInputPasswordLayout.error = null
+                if (!s.isNullOrBlank())
+                    if (s.contains("[^A-Za-z0-9_]".toRegex()))
+                        binding.loginInputPasswordLayout.error = "invalid character"
+                    else binding.loginInputPasswordLayout.error = null
+                else binding.loginInputPasswordLayout.error = null
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -91,12 +97,11 @@ class LoginDialogFragment : DialogFragment(R.layout.dialog_fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        viewModel.token.observe(viewLifecycleOwner) {
-            if (it != null) dismiss()
-        }
+        viewModel.token.observe(viewLifecycleOwner) { it?.let { dismiss() } }
 
         viewModel.authError.observe(viewLifecycleOwner) {
-            Snackbar.make(requireParentFragment().requireView(), it.message, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(requireParentFragment().requireView(), it.message, Snackbar.LENGTH_SHORT)
+                .show()
         }
     }
 }

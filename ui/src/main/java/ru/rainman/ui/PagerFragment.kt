@@ -22,6 +22,8 @@ import ru.rainman.ui.databinding.FragmentPagerBinding
 import ru.rainman.ui.helperutils.CurrentPlayedItemState
 import ru.rainman.ui.helperutils.PlayerHolder
 import ru.rainman.ui.helperutils.PubType
+import ru.rainman.ui.helperutils.getNavController
+import java.lang.RuntimeException
 
 @AndroidEntryPoint
 class PagerFragment : Fragment(R.layout.fragment_pager) {
@@ -44,6 +46,9 @@ class PagerFragment : Fragment(R.layout.fragment_pager) {
             }
         }
 
+        viewModel.isLoggedIn.observe(viewLifecycleOwner) {
+            binding.add.isVisible = it && args.intention == PUBLICATIONS
+        }
 
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -114,7 +119,19 @@ class PagerFragment : Fragment(R.layout.fragment_pager) {
                 )
             }
 
+
+
         pager.adapter = PagerAdapter(childFragmentManager, lifecycle, fragments)
+
+        binding.add.setOnClickListener {
+            requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host).navigate(
+                when (pager.currentItem) {
+                    0 -> MainFragmentDirections.actionMainFragmentToPostEditorFragment()
+                    1 -> MainFragmentDirections.actionMainFragmentToEventEditorFragment()
+                    else -> throw RuntimeException("invalid item")
+                }
+            )
+        }
 
         TabLayoutMediator(tabs, pager) { tab, pos ->
             tab.text = when (pos) {
@@ -130,6 +147,7 @@ class PagerFragment : Fragment(R.layout.fragment_pager) {
 
                 else -> null
             }
+
         }.attach()
     }
 

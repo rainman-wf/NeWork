@@ -20,7 +20,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EventEditorViewModel @Inject constructor(
-    private val apiTestRepository: ApiTestRepository,
     private val userRepository: UserRepository,
     private val eventRepository: EventRepository
 ) : ViewModel(){
@@ -61,23 +60,6 @@ class EventEditorViewModel @Inject constructor(
         }
     }
 
-    fun sendPhoto(file: File) {
-        viewModelScope.launch {
-            apiTestRepository.sendPhoto(file)
-        }
-    }
-
-    fun sendVideo(file: File) {
-        viewModelScope.launch {
-            apiTestRepository.sendVideo(file)
-        }
-    }
-
-    fun sendAudio(file: File) {
-        viewModelScope.launch {
-            apiTestRepository.sendAudio(file)
-        }
-    }
 
     fun publish(newEventDto: NewEventDto) {
         viewModelScope.launch {

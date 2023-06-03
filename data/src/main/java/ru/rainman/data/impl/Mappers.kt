@@ -4,9 +4,11 @@ import com.example.common_utils.toDateTime
 import ru.rainman.data.local.entity.*
 import ru.rainman.data.local.entity.crossref.*
 import ru.rainman.data.remote.request.EventCreateRequest
+import ru.rainman.data.remote.request.PostCreateRequest
 import ru.rainman.data.remote.response.*
 import ru.rainman.data.remote.response.Coordinates
 import ru.rainman.domain.dto.NewEventDto
+import ru.rainman.domain.dto.NewPostDto
 import ru.rainman.domain.model.*
 import ru.rainman.domain.model.Attachment
 import ru.rainman.domain.model.Coordinates as CoordinatesModel
@@ -194,6 +196,20 @@ fun NewEventDto.toRequestBody(attachment: AttachmentRequestBody? = null) = Event
     attachment = attachment,
     link = link,
     speakerIds = speakerIds
+)
+
+fun NewPostDto.toRequestBody(attachment: AttachmentRequestBody? = null) = PostCreateRequest(
+    id = 0,
+    content = content,
+    coordinates = coordinates?.let {
+        Coordinates(
+            it.latitude.toString().take(8),
+            it.longitude.toString().take(8)
+        )
+    },
+    attachment = attachment,
+    link = link,
+    mentionIds = mentionIds
 )
 
 

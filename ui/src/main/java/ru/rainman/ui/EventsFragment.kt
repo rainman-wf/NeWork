@@ -29,9 +29,7 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
         navController =
             requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
 
-        binding.newEvent.setOnClickListener {
-            navController.navigate(MainFragmentDirections.actionMainFragmentToEventEditorFragment())
-        }
+
 
         val parentFragment = requireParentFragment() as PagerFragment
 

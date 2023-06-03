@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.example.common_utils.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.rainman.domain.model.User
 import ru.rainman.domain.repository.UserRepository
@@ -30,6 +31,9 @@ class SelectUsersDialogViewModel @Inject constructor(
     val selectableUsers: LiveData<List<SelectableUser>> get() = _selectableUsers
 
     init {
+
+        log("select users dialog init")
+
         _selectableUsers.addSource(_users) {
             _selectableUsers.postValue(combineSelectable(it, _selectedIds.value ?: emptySet()))
         }

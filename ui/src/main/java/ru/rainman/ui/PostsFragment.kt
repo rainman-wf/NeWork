@@ -2,14 +2,11 @@ package ru.rainman.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.common_utils.log
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -66,7 +63,6 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
                 }
             }
         })
-
 
         binding.postList.adapter = adapter
 

@@ -48,7 +48,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Glide.with(requireContext())
                     .asDrawable()
                     .load(avatar)
-                    .override(48,48)
+                    .override(40,40)
                     .error(R.drawable.avatar_error)
                     .circleCrop()
                     .into(object : CustomTarget<Drawable>() {
@@ -98,6 +98,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         }
     }
+
 
 }
 

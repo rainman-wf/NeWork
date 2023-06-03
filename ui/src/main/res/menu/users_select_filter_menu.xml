@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/select_users_favorite"
-        android:checkable="true"
-        android:title="@string/favorite"
-        app:showAsAction="collapseActionView"/>
+
+    <group>
+        <item
+            android:id="@+id/select_users_favorite"
+            android:checkable="true"
+            android:title="@string/favorite"
+            app:showAsAction="collapseActionView"/>
+    </group>
+
 
     <group
         android:checkableBehavior="single"

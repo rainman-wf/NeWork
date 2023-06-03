@@ -20,6 +20,7 @@ import ru.rainman.domain.model.Coordinates
 import ru.rainman.domain.model.EventType
 import ru.rainman.ui.EventEditorViewModel.PublishingState.*
 import ru.rainman.ui.databinding.FragmentEventEditorBinding
+import ru.rainman.ui.helperutils.PubType
 import ru.rainman.ui.helperutils.TimeUnitsWrapper
 import ru.rainman.ui.helperutils.getObject
 import ru.rainman.ui.helperutils.getNavController
@@ -27,6 +28,8 @@ import ru.rainman.ui.helperutils.snack
 import ru.rainman.ui.helperutils.toStringDate
 import ru.rainman.ui.helperutils.toUploadMedia
 import ru.rainman.ui.storage.StorageBottomSheet
+import ru.rainman.ui.storage.args.ArgKeys
+import ru.rainman.ui.storage.args.RequestKey
 import ru.rainman.ui.view.SpeakerChip
 import java.time.Instant
 import java.time.LocalDateTime
@@ -34,18 +37,6 @@ import java.util.TimeZone
 
 @AndroidEntryPoint
 class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
-
-    companion object {
-
-
-        const val EVENT_SPEAKERS_REQUEST_KEY = "event_speakers"
-        const val EVENT_ATTACHMENT_REQUEST_KEY = "event_attachment"
-        const val EVENT_LOCATION_REQUEST_KEY = "event_location"
-
-        const val KEY_SPEAKERS = "speakers"
-        const val KEY_ATTACHMENT = "attachment"
-        const val KEY_LOCATION = "location"
-    }
 
     private val binding: FragmentEventEditorBinding by viewBinding(FragmentEventEditorBinding::bind)
     private val viewModel: EventEditorViewModel by viewModels()
@@ -125,7 +116,7 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
                 dateTime = dateTime,
                 speakerIds = viewModel.speakers.value?.map { it.id } ?: listOf(),
                 coordinates = if (!isOnline) geo else null,
-                link =  if (isOnline) link.toString() else null,
+                link = if (isOnline) link.toString() else null,
                 type = if (isOnline) EventType.ONLINE else EventType.OFFLINE,
                 attachment = viewModel.attachment.value?.let {
                     NewAttachmentDto(
@@ -146,7 +137,7 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
         viewModel.eventStatus.observe(viewLifecycleOwner) {
             when (it) {
                 ERROR -> snack("SENDING ERROR")
-                LOADING -> snack ("SENDING...")
+                LOADING -> snack("SENDING...")
                 SUCCESS -> navController.navigateUp()
                 null -> {}
             }
@@ -220,29 +211,37 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             navController.navigate(
                 EventEditorFragmentDirections
                     .actionEventEditorFragmentToSelectUsersDialogFragment(
-                        viewModel.speakers.value?.map { it.id }?.toLongArray() ?: longArrayOf()
+                        viewModel.speakers.value?.map { it.id }?.toLongArray() ?: longArrayOf(),
+                        editableType = PubType.EVENT
                     )
             )
         }
 
-        setFragmentResultListener(EVENT_SPEAKERS_REQUEST_KEY) { _, bundle ->
-            viewModel.setSpeakers(bundle.getLongArray(KEY_SPEAKERS)?.toList() ?: emptyList())
+        setFragmentResultListener(RequestKey.EVENT_REQUEST_KEY_SPEAKERS.name) { _, bundle ->
+            viewModel.setSpeakers(bundle.getLongArray(ArgKeys.USERS.name)?.toList() ?: emptyList())
         }
 
-        setFragmentResultListener(EVENT_ATTACHMENT_REQUEST_KEY) { _, bundle ->
-            viewModel.setAttachment(bundle.getObject(KEY_ATTACHMENT))
+        setFragmentResultListener(RequestKey.EVENT_REQUEST_KEY_ATTACHMENT.name) { _, bundle ->
+            viewModel.setAttachment(bundle.getObject(ArgKeys.ATTACHMENT.name))
         }
 
-        setFragmentResultListener(EVENT_LOCATION_REQUEST_KEY) { _, bundle ->
-            viewModel.setLocation(bundle.getObject(KEY_LOCATION))
+        setFragmentResultListener(RequestKey.EVENT_REQUEST_KEY_LOCATION.name) { _, bundle ->
+            viewModel.setLocation(bundle.getObject(ArgKeys.LOCATION.name))
         }
 
 
         binding.addEventAttachment.setOnClickListener {
+            val dialog = StorageBottomSheet()
+            val bundle = Bundle()
+            bundle.putString(ArgKeys.ATTACHMENT.name, PubType.EVENT.name)
+            dialog.arguments = bundle
             StorageBottomSheet().show(parentFragmentManager, "STORAGE")
         }
 
         viewModel.attachment.observe(viewLifecycleOwner) { attachment ->
+
+            binding.attachmentPreview.isVisible = attachment != null
+
             attachment?.let { binding.attachmentPreview.setData(it) }
                 ?: binding.attachmentPreview.recycle()
             binding.attachmentPreview.isVisible = attachment != null

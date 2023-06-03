@@ -8,8 +8,8 @@ data class PostCreateRequest(
     val id: Int,
     val content: String,
     @SerializedName("coords")
-    val coordinates: Coordinates,
-    val link: String,
-    val attachment: Attachment,
-    val mentionIds: List<Int>
+    val coordinates: Coordinates?,
+    val link: String?,
+    val attachment: Attachment?,
+    val mentionIds: List<Long> = emptyList()
 )

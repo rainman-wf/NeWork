@@ -1,19 +1,23 @@
 package ru.rainman.ui
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.DialogFragmentSelectUsersBinding
+import ru.rainman.ui.helperutils.PubType
 import ru.rainman.ui.helperutils.menuItemHandle
+import ru.rainman.ui.storage.args.ArgKeys
+import ru.rainman.ui.storage.args.RequestKey
 
 @AndroidEntryPoint
 class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select_users) {
@@ -25,22 +29,40 @@ class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         binding = DialogFragmentSelectUsersBinding.inflate(requireActivity().layoutInflater)
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setView(binding.root)
-            .setPositiveButton("Done") { _, _ ->
-                val bundle = Bundle()
-                bundle.putLongArray(
-                    EventEditorFragment.KEY_SPEAKERS,
-                    viewModel.selectedIds.toLongArray()
-                )
-                setFragmentResult(EventEditorFragment.EVENT_SPEAKERS_REQUEST_KEY, bundle)
-            }
+        val builder = MaterialAlertDialogBuilder(requireContext())
 
-            .setNegativeButton("Cansel") { _, _ ->
-                val bundle = Bundle()
-                bundle.putLongArray(EventEditorFragment.KEY_SPEAKERS, args.ids)
-                setFragmentResult(EventEditorFragment.EVENT_SPEAKERS_REQUEST_KEY, bundle)
+        setStyle(STYLE_NORMAL, R.style.FullscreenDialog)
+
+        builder.setView(binding.root)
+
+        binding.buttonPositive.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putLongArray(
+                ArgKeys.USERS.name,
+                viewModel.selectedIds.toLongArray()
+            )
+            when (args.editableType) {
+                PubType.POST ->
+                    setFragmentResult(RequestKey.POST_REQUEST_KEY_MENTIONED.name, bundle)
+                PubType.EVENT ->
+                    setFragmentResult(RequestKey.EVENT_REQUEST_KEY_SPEAKERS.name, bundle)
             }
+            dismiss()
+        }
+
+        binding.buttonNegative.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putLongArray(ArgKeys.USERS.name, args.ids)
+
+            when(args.editableType) {
+                PubType.EVENT ->
+                    setFragmentResult(RequestKey.EVENT_REQUEST_KEY_SPEAKERS.name, bundle)
+                PubType.POST ->
+                    setFragmentResult(RequestKey.POST_REQUEST_KEY_MENTIONED.name, bundle)
+            }
+            dismiss()
+        }
+
         return builder.create()
     }
 
@@ -56,6 +78,10 @@ class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select
                 return true
             }
         })
+
+        binding.userSelectToolbar.overflowIcon =
+            AppCompatResources.getDrawable(requireContext(), R.drawable.filter)
+        binding.userSelectToolbar.menu.setGroupDividerEnabled(true)
 
         viewModel.filterState.observe(viewLifecycleOwner) {
 

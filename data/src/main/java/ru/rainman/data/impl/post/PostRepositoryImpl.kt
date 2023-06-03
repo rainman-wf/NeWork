@@ -2,12 +2,21 @@ package ru.rainman.data.impl.post
 
 
 import androidx.paging.PagingData
+import com.example.common_utils.log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import ru.rainman.data.impl.toEntity
 import ru.rainman.data.impl.toModel
+import ru.rainman.data.impl.toRequestBody
 import ru.rainman.data.local.dao.PostDao
+import ru.rainman.data.remote.api.MediaApi
 import ru.rainman.data.remote.api.PostApi
 import ru.rainman.data.remote.apiRequest
+import ru.rainman.data.remote.response.Attachment
 import ru.rainman.domain.dto.NewPostDto
 import ru.rainman.domain.model.Post
 import ru.rainman.domain.repository.PostRepository
@@ -19,7 +28,8 @@ class PostRepositoryImpl @Inject constructor(
     private val postsPagedData: PostsPagedData,
     private val postSyncUtil: PostSyncUtil,
     private val postDao: PostDao,
-    private val postApi: PostApi
+    private val postApi: PostApi,
+    private val mediaApi: MediaApi
 ) : PostRepository {
 
     override val data: Flow<PagingData<Post>> = postsPagedData.data
@@ -30,7 +40,38 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun create(newObjectDto: NewPostDto): Post? {
-        TODO("Not yet implemented")
+        val attachment = newObjectDto.attachment?.let { dto ->
+            val media = try {
+                apiRequest {
+                    mediaApi.uploadMedia(
+                        dto.media.bytes.toByteArray()
+                            .toRequestBody("multipart/from-data".toMediaType()).let { body ->
+                                MultipartBody.Part.createFormData(
+                                    "file",
+                                    dto.media.fileName,
+                                    body
+                                )
+                            }
+                    )
+                }
+            } catch (e: Exception) {
+                log(e.message)
+                return null
+            }
+
+            Attachment(dto.type.name, media.url)
+        }
+
+        return withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
+            val post = try {
+                apiRequest { postApi.create(newObjectDto.toRequestBody(attachment)) }
+            } catch (e: Exception) {
+                log (e)
+                return@withContext null
+            }
+            postDao.insert(post.toEntity())
+            postDao.getById(post.id).toModel()
+        }
     }
 
     override suspend fun getById(id: Long): Post? {
@@ -40,8 +81,6 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getByIds(ids: List<Long>): List<Post> {
         TODO("Not yet implemented")
     }
-
-
 
     override suspend fun delete(id: Long): Boolean {
         TODO("Not yet implemented")

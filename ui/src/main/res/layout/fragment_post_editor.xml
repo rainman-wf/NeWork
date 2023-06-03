@@ -22,10 +22,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingBottom="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,7 +43,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_event_content"
+                    android:id="@+id/input_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/input_content"
@@ -48,30 +51,20 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/add_attachment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:elevation="8dp"
-                android:paddingLeft="16dp"
-                android:text="Add attachment"
-                app:icon="@drawable/add" />
-
             <ru.rainman.ui.view.AttachmentView
                 android:id="@+id/attachment_preview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"/>
-
+                android:visibility="gone" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mentioned_users_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
+                android:visibility="gone"
                 app:cardCornerRadius="4dp"
-                app:strokeColor="?attr/colorOutline"
-                android:visibility="gone">
+                app:strokeColor="?attr/colorOutline">
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/mentioned_users"
@@ -82,25 +75,27 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/mention_users"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:elevation="8dp"
-                android:paddingLeft="16dp"
-                android:text="Mention users"
-                app:icon="@drawable/mention" />
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+        app:menuAlignmentMode="start"
+        app:fabAlignmentMode="end"
+        app:fabCradleVerticalOffset="14dp"
+        app:menu="@menu/post_editor_bar"
+        />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/save_event"
+        android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        app:layout_anchor="@id/bottom_bar"
         android:layout_margin="16dp"
         android:src="@drawable/done"
         app:maxImageSize="32dp" />
