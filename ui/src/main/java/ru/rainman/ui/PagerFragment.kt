@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.rainman.nework.ui.users.UserListArg
-import ru.rainman.ui.helperutils.Args.*
+import ru.rainman.ui.helperutils.args.Args.*
 import ru.rainman.ui.databinding.FragmentPagerBinding
 import ru.rainman.ui.helperutils.CurrentPlayedItemState
 import ru.rainman.ui.helperutils.PlayerHolder

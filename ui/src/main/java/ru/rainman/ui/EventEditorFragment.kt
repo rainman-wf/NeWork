@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -22,14 +21,16 @@ import ru.rainman.ui.EventEditorViewModel.PublishingState.*
 import ru.rainman.ui.databinding.FragmentEventEditorBinding
 import ru.rainman.ui.helperutils.PubType
 import ru.rainman.ui.helperutils.TimeUnitsWrapper
+import ru.rainman.ui.helperutils.args.ArgKey
+import ru.rainman.ui.helperutils.args.RequestKey
+import ru.rainman.ui.helperutils.args.putString
+import ru.rainman.ui.helperutils.args.setResultListener
 import ru.rainman.ui.helperutils.getObject
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.snack
 import ru.rainman.ui.helperutils.toStringDate
 import ru.rainman.ui.helperutils.toUploadMedia
 import ru.rainman.ui.storage.StorageBottomSheet
-import ru.rainman.ui.storage.args.ArgKeys
-import ru.rainman.ui.storage.args.RequestKey
 import ru.rainman.ui.view.SpeakerChip
 import java.time.Instant
 import java.time.LocalDateTime
@@ -217,23 +218,23 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             )
         }
 
-        setFragmentResultListener(RequestKey.EVENT_REQUEST_KEY_SPEAKERS.name) { _, bundle ->
-            viewModel.setSpeakers(bundle.getLongArray(ArgKeys.USERS.name)?.toList() ?: emptyList())
+        setResultListener(RequestKey.EVENT_REQUEST_KEY_SPEAKERS) { bundle ->
+            viewModel.setSpeakers(bundle.getLongArray(ArgKey.USERS.name)?.toList() ?: emptyList())
         }
 
-        setFragmentResultListener(RequestKey.EVENT_REQUEST_KEY_ATTACHMENT.name) { _, bundle ->
-            viewModel.setAttachment(bundle.getObject(ArgKeys.ATTACHMENT.name))
+        setResultListener(RequestKey.EVENT_REQUEST_KEY_ATTACHMENT) { bundle ->
+            viewModel.setAttachment(bundle.getObject(ArgKey.ATTACHMENT.name))
         }
 
-        setFragmentResultListener(RequestKey.EVENT_REQUEST_KEY_LOCATION.name) { _, bundle ->
-            viewModel.setLocation(bundle.getObject(ArgKeys.LOCATION.name))
+        setResultListener(RequestKey.EVENT_REQUEST_KEY_LOCATION) { bundle ->
+            viewModel.setLocation(bundle.getObject(ArgKey.LOCATION.name))
         }
 
 
         binding.addEventAttachment.setOnClickListener {
             val dialog = StorageBottomSheet()
             val bundle = Bundle()
-            bundle.putString(ArgKeys.ATTACHMENT.name, PubType.EVENT.name)
+            bundle.putString(ArgKey.ATTACHMENT, PubType.EVENT.name)
             dialog.arguments = bundle
             StorageBottomSheet().show(parentFragmentManager, "STORAGE")
         }

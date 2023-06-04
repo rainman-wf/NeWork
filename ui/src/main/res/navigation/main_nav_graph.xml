@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_pager" >
         <argument
             android:name="intention"
-            app:argType="ru.rainman.ui.helperutils.Args"
+            app:argType="ru.rainman.ui.helperutils.args.Args"
             android:defaultValue="PUBLICATIONS" />
     </fragment>
     <fragment
@@ -22,7 +22,7 @@
         tools:layout="@layout/fragment_pager" >
         <argument
             android:name="intention"
-            app:argType="ru.rainman.ui.helperutils.Args"
+            app:argType="ru.rainman.ui.helperutils.args.Args"
             android:defaultValue="USERS" />
     </fragment>
     <fragment

@@ -12,7 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -48,9 +47,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.geo.ToponymObjectData
 import ru.rainman.ui.helperutils.SimpleLocation
+import ru.rainman.ui.helperutils.args.ArgKey
+import ru.rainman.ui.helperutils.args.putObject
+import ru.rainman.ui.helperutils.args.putResult
 import ru.rainman.ui.helperutils.getNavController
-import ru.rainman.ui.storage.args.ArgKeys
-import ru.rainman.ui.storage.args.RequestKey
+//import ru.rainman.ui.storage.args.ArgKeys
+//import ru.rainman.ui.storage.args.RequestKey
 
 @AndroidEntryPoint
 class MapFragment : Fragment(R.layout.fragment_map), GeoObjectTapListener, InputListener {
@@ -168,7 +170,7 @@ class MapFragment : Fragment(R.layout.fragment_map), GeoObjectTapListener, Input
 
         binding.done.setOnClickListener {
             val bundle = Bundle()
-            val simpleLocation = viewModel.pointLiveData.value?.let {
+            viewModel.pointLiveData.value?.let {
                 val point = it.geometry[0] as PointModel
                 SimpleLocation(
                     PointModel(
@@ -177,10 +179,11 @@ class MapFragment : Fragment(R.layout.fragment_map), GeoObjectTapListener, Input
                     ),
                     it.name ?: (it.metadataContainer as ToponymObjectData).address.formattedAddress
                 )
+            }?.let {
+                bundle.putObject(ArgKey.LOCATION, it)
+                putResult(ru.rainman.ui.helperutils.args.RequestKey.EVENT_REQUEST_KEY_LOCATION, bundle)
             }
 
-            bundle.putSerializable(ArgKeys.LOCATION.name, simpleLocation)
-            setFragmentResult(RequestKey.EVENT_REQUEST_KEY_LOCATION.name, bundle)
             navController.navigateUp()
         }
 

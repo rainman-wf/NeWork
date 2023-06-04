@@ -15,9 +15,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.DialogFragmentSelectUsersBinding
 import ru.rainman.ui.helperutils.PubType
+import ru.rainman.ui.helperutils.args.ArgKey
+import ru.rainman.ui.helperutils.args.RequestKey
+import ru.rainman.ui.helperutils.args.putResult
 import ru.rainman.ui.helperutils.menuItemHandle
-import ru.rainman.ui.storage.args.ArgKeys
-import ru.rainman.ui.storage.args.RequestKey
+//import ru.rainman.ui.storage.args.ArgKeys
+//import ru.rainman.ui.storage.args.RequestKey
 
 @AndroidEntryPoint
 class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select_users) {
@@ -38,21 +41,21 @@ class SelectUsersDialogFragment : DialogFragment(R.layout.dialog_fragment_select
         binding.buttonPositive.setOnClickListener {
             val bundle = Bundle()
             bundle.putLongArray(
-                ArgKeys.USERS.name,
+                ArgKey.USERS.name,
                 viewModel.selectedIds.toLongArray()
             )
             when (args.editableType) {
                 PubType.POST ->
-                    setFragmentResult(RequestKey.POST_REQUEST_KEY_MENTIONED.name, bundle)
+                    putResult(RequestKey.POST_REQUEST_KEY_MENTIONED, bundle)
                 PubType.EVENT ->
-                    setFragmentResult(RequestKey.EVENT_REQUEST_KEY_SPEAKERS.name, bundle)
+                    putResult(RequestKey.EVENT_REQUEST_KEY_SPEAKERS, bundle)
             }
             dismiss()
         }
 
         binding.buttonNegative.setOnClickListener {
             val bundle = Bundle()
-            bundle.putLongArray(ArgKeys.USERS.name, args.ids)
+            bundle.putLongArray(ArgKey.USERS.name, args.ids)
 
             when(args.editableType) {
                 PubType.EVENT ->

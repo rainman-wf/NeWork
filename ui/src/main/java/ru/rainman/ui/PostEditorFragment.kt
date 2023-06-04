@@ -16,12 +16,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.domain.model.geo.Point
 import ru.rainman.ui.databinding.FragmentPostEditorBinding
 import ru.rainman.ui.helperutils.PubType
+import ru.rainman.ui.helperutils.args.ArgKey
+import ru.rainman.ui.helperutils.args.RequestKey
+import ru.rainman.ui.helperutils.args.putString
+import ru.rainman.ui.helperutils.args.setResultListener
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.getObject
 import ru.rainman.ui.helperutils.snack
 import ru.rainman.ui.storage.StorageBottomSheet
-import ru.rainman.ui.storage.args.ArgKeys
-import ru.rainman.ui.storage.args.RequestKey
+//import ru.rainman.ui.storage.args.ArgKeys
+//import ru.rainman.ui.storage.args.RequestKey
 import ru.rainman.ui.view.SpeakerChip
 
 @AndroidEntryPoint
@@ -61,12 +65,12 @@ class PostEditorFragment : Fragment(R.layout.fragment_post_editor) {
             navController.popBackStack()
         }
 
-        setFragmentResultListener(RequestKey.POST_REQUEST_KEY_MENTIONED.name) { _, bundle ->
-            viewModel.setMentioned(bundle.getLongArray(ArgKeys.USERS.name)?.toList() ?: emptyList())
+        setResultListener(RequestKey.POST_REQUEST_KEY_MENTIONED) { bundle ->
+            viewModel.setMentioned(bundle.getLongArray(ArgKey.USERS.name)?.toList() ?: emptyList())
         }
 
-        setFragmentResultListener(RequestKey.POST_REQUEST_KEY_ATTACHMENT.name) { _, bundle ->
-            viewModel.setAttachment(bundle.getObject(ArgKeys.ATTACHMENT.name))
+        setResultListener(RequestKey.POST_REQUEST_KEY_ATTACHMENT) { bundle ->
+            viewModel.setAttachment(bundle.getObject(ArgKey.ATTACHMENT.name))
         }
 
         viewModel.attachment.observe(viewLifecycleOwner) { attachment ->
@@ -83,7 +87,7 @@ class PostEditorFragment : Fragment(R.layout.fragment_post_editor) {
             when (menuItem.itemId) {
                 R.id.attachment -> {
                     val bundle = Bundle()
-                    bundle.putString(ArgKeys.ATTACHMENT.name, PubType.POST.name)
+                    bundle.putString(ArgKey.ATTACHMENT, PubType.POST.name)
                     val dialog = StorageBottomSheet()
                     dialog.arguments = bundle
                     dialog.show(
