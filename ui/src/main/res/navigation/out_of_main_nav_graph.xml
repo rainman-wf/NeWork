@@ -36,6 +36,10 @@
         <action
             android:id="@+id/action_eventEditorFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <argument
+            android:name="eventId"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
     <fragment
         android:id="@+id/postEditorFragment"
@@ -45,6 +49,10 @@
         <action
             android:id="@+id/action_postEditorFragment_to_selectUsersDialogFragment"
             app:destination="@id/selectUsersDialogFragment" />
+        <argument
+            android:name="postId"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"

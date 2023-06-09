@@ -10,7 +10,7 @@ data class Post(
     val coordinates: Coordinates?,
     val link: LinkPreview?,
     val likeOwnerIds: List<User>,
-    val mentionIds: List<User>,
+    val mentioned: List<User>,
     val mentionedMe: Boolean,
     val likedByMe: Boolean,
     val attachment: Attachment?,

@@ -1,13 +1,21 @@
 package ru.rainman.ui
 
+import android.content.Context
 import android.text.TextUtils
+import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +34,8 @@ class PostsAdapter(
 
     inner class ViewHolder(private val binding: CardPostBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(post: Post) {
+        @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
+        fun  bind(post: Post) {
 
             binding.apply {
 
@@ -34,7 +43,7 @@ class PostsAdapter(
                     Glide.with(binding.root.context)
                         .load(it)
                         .circleCrop()
-                        .placeholder(R.drawable.avatar_stub_large)
+                        .placeholder(R.drawable.avatar_empty)
                         .into(header.avatar)
                 } ?: Glide.with(binding.root.context).clear(header.avatar)
 
@@ -65,8 +74,18 @@ class PostsAdapter(
 
                 like.isChecked = post.likedByMe
 
+                like.viewTreeObserver.addOnGlobalLayoutListener {
+                    BadgeDrawable.create(like.context).apply {
+                        verticalOffset = 16
+                        number = post.likeOwnerIds.size
+                        backgroundColor = binding.root.context.getColorAttribute(com.google.android.material.R.attr.colorSecondary)
+                        badgeTextColor = binding.root.context.getColorAttribute(com.google.android.material.R.attr.colorOnSecondary)
+                        BadgeUtils.attachBadgeDrawable(this, like)
+                    }
+                }
+
                 header.more.setOnClickListener {
-                    onPostClickListener.onMoreClicked(post.id)
+                    showPopupMenu(binding.header.more, post)
                 }
 
                 like.setOnClickListener {
@@ -97,6 +116,24 @@ class PostsAdapter(
                 }
             }
         }
+
+
+        private fun showPopupMenu(view: View, post: Post) {
+            with(PopupMenu(view.context, view)) {
+                inflate(R.menu.publication_menu)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.edit -> setListener(onPostClickListener.onEditClicked(post.id))
+                        R.id.delete -> setListener(onPostClickListener.onDeleteClicked(post.id))
+                        else -> false
+                    }
+                }
+                show()
+            }
+        }
+
+        private val setListener: (Unit) -> Boolean = { true }
+
     }
 
     class Diff : DiffUtil.ItemCallback<Post>() {
@@ -122,5 +159,12 @@ class PostsAdapter(
                 false
             )
         )
+    }
+
+    @ColorInt
+    fun Context.getColorAttribute(@AttrRes attr: Int) :  Int {
+        val typedValue = TypedValue()
+        theme.resolveAttribute(attr, typedValue, true)
+        return typedValue.data
     }
 }

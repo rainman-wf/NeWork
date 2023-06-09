@@ -29,8 +29,6 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
         navController =
             requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
 
-
-
         val parentFragment = requireParentFragment() as PagerFragment
 
         val adapter =
@@ -47,8 +45,12 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
                     snack("share $eventId")
                 }
 
-                override fun onMoreClicked(eventId: Long) {
-                    snack("more $eventId")
+                override fun onEditClicked(postId: Long) {
+                    navController.navigate(MainFragmentDirections.actionMainFragmentToEventEditorFragment(postId))
+                }
+
+                override fun onDeleteClicked(postId: Long) {
+                    viewModel.delete(postId)
                 }
 
                 override fun onAuthorClicked(eventId: Long) {
@@ -63,7 +65,7 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
                     when (attachment) {
                         is Attachment.Video -> {
                             parentFragment.stopAudio()
-                            showVideoDialog(attachment.uri)
+                            showVideoDialog(attachment.uri, attachment.ratio)
                         }
                         is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.EVENT, postId)
                         else -> {}

@@ -1,7 +1,6 @@
 package ru.rainman.data.impl.user
 
 import androidx.paging.PagingData
-import com.example.common_utils.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.rainman.data.impl.toEntity
 import ru.rainman.data.impl.toModel
@@ -44,7 +42,6 @@ class UserRepositoryImpl @Inject constructor(
     private val _authError = MutableSharedFlow<ApiError>()
     override val authError: Flow<ApiError> get() = _authError
     override val flowableUsers: Flow<List<User>> = userDao.getAll().map { list ->
-        log(list)
         list.map { it.toModel() }
     }
 

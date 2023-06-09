@@ -3,14 +3,10 @@ package ru.rainman.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.common_utils.log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import ru.rainman.domain.model.Token
-import ru.rainman.domain.model.User
 import ru.rainman.domain.repository.UserRepository
 import ru.rainman.ui.helperutils.Me
 import javax.inject.Inject

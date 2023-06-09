@@ -19,11 +19,11 @@ class PostSyncUtil @Inject constructor(
         val newPost = postResponse.toEntity()
         val oldPost = postDao.getById(postResponse.id)
 
-        if (!oldPost.postEntity.compareWith(newPost)) postDao.update(newPost)
+        if (oldPost!!.postEntity.compareWith(newPost)) postDao.update(newPost)
 
         postUsersSyncUtil.syncLikeOwners(postResponse)
         postUsersSyncUtil.syncMentioned(postResponse)
 
-        return postDao.getById(postResponse.id)
+        return postDao.getById(postResponse.id)!!
     }
 }

@@ -19,11 +19,11 @@ class EventSyncUtil @Inject constructor(
         val newEvent = eventResponse.toEntity()
         val oldEvent = eventDao.getById(eventResponse.id)
 
-        if (!oldEvent.eventEntity.compareWith(newEvent)) eventDao.update(newEvent)
+        if (!oldEvent!!.eventEntity.compareWith(newEvent)) eventDao.update(newEvent)
 
         eventUsersSyncUtil.syncEventLikeOwners(eventResponse)
         eventUsersSyncUtil.syncEventParticipants(eventResponse)
 
-        return eventDao.getById(eventResponse.id)
+        return eventDao.getById(eventResponse.id)!!
     }
 }

@@ -6,19 +6,19 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "event_attachments",
+    tableName = "post_attachments",
     foreignKeys = [
         ForeignKey(
-            entity = EventEntity::class,
-            parentColumns = ["event_id"],
-            childColumns = ["event_id"],
+            entity = PostEntity::class,
+            parentColumns = ["post_id"],
+            childColumns = ["post_id"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class EventAttachmentEntity(
+data class PostAttachmentEntity(
     @PrimaryKey
-    @ColumnInfo(name = "event_id")
+    @ColumnInfo(name = "post_id")
     override val publicationId: Long,
     override val url: String,
     override val type: AttachmentType,
@@ -27,4 +27,3 @@ data class EventAttachmentEntity(
     override val artist: String?,
     override val title: String?
 ) : AttachmentEntity(publicationId, url, type, duration, ratio, artist, title)
-

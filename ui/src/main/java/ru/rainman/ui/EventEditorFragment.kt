@@ -2,25 +2,20 @@ package ru.rainman.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
+import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import ru.rainman.domain.dto.NewAttachmentDto
-import ru.rainman.domain.dto.NewEventDto
-import ru.rainman.domain.model.Attachment
-import ru.rainman.domain.model.Coordinates
 import ru.rainman.domain.model.EventType
-import ru.rainman.ui.EventEditorViewModel.PublishingState.*
 import ru.rainman.ui.databinding.FragmentEventEditorBinding
 import ru.rainman.ui.helperutils.PubType
-import ru.rainman.ui.helperutils.TimeUnitsWrapper
+import ru.rainman.ui.helperutils.Status
 import ru.rainman.ui.helperutils.args.ArgKey
 import ru.rainman.ui.helperutils.args.RequestKey
 import ru.rainman.ui.helperutils.args.putString
@@ -28,13 +23,9 @@ import ru.rainman.ui.helperutils.args.setResultListener
 import ru.rainman.ui.helperutils.getObject
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.snack
-import ru.rainman.ui.helperutils.toStringDate
-import ru.rainman.ui.helperutils.toUploadMedia
 import ru.rainman.ui.storage.StorageBottomSheet
 import ru.rainman.ui.view.SpeakerChip
-import java.time.Instant
-import java.time.LocalDateTime
-import java.util.TimeZone
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
@@ -42,6 +33,7 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
     private val binding: FragmentEventEditorBinding by viewBinding(FragmentEventEditorBinding::bind)
     private val viewModel: EventEditorViewModel by viewModels()
     private lateinit var navController: NavController
+    private val args: EventEditorFragmentArgs by navArgs()
 
     private val datePicker =
         MaterialDatePicker.Builder.datePicker().setTitleText("Select date").setSelection(
@@ -57,98 +49,32 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
         navController =
             requireActivity().supportFragmentManager.getNavController(R.id.out_of_main_nav_host)
 
+        if (args.eventId > 0) viewModel.loadEvent(args.eventId)
+
         binding.eventTypeToggle.addOnButtonCheckedListener { _, id, isChecked ->
             if (isChecked) viewModel.online(id == binding.eventEditorOnline.id)
         }
 
         binding.saveEvent.setOnClickListener {
-
-            val content = binding.inputEventContent.text
-
-            if (content.isNullOrBlank()) {
-                snack("CONTENT IS REQUIRED")
-                return@setOnClickListener
-            }
-
-            val date = viewModel.date.value
-
-            if (date == null) {
-                snack("DATE IS REQUIRED ")
-                return@setOnClickListener
-            }
-
-            val time = viewModel.time.value
-
-            if (time == null) {
-                snack("TIME IS REQUIRED ")
-                return@setOnClickListener
-            }
-
-            val localDate = LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(date),
-                TimeZone.getDefault().toZoneId()
-            )
-
-            val isOnline = viewModel.isOnline.value!!
-
-            val link = binding.eventEditorInputLink.text
-            val geo = viewModel.location.value?.let {
-                Coordinates(it.point.latitude, it.point.longitude)
-            }
-
-            if (isOnline) {
-
-                if (link.isNullOrBlank()) {
-                    snack("LINK IS REQUIRED FOR ONLINE MODE")
-                    return@setOnClickListener
-                }
-            } else {
-                if (geo == null) {
-                    snack("LOCATION IS REQUIRED FOR OFFLINE MODE")
-                    return@setOnClickListener
-                }
-            }
-
-            val dateTime =
-                localDate.plusHours(time.hours.toLong()).plusMinutes(time.minutes.toLong())
-
-            val dto = NewEventDto(
-                content = requireNotNull(content.toString()),
-                dateTime = dateTime,
-                speakerIds = viewModel.speakers.value?.map { it.id } ?: listOf(),
-                coordinates = if (!isOnline) geo else null,
-                link = if (isOnline) link.toString() else null,
-                type = if (isOnline) EventType.ONLINE else EventType.OFFLINE,
-                attachment = viewModel.attachment.value?.let {
-                    NewAttachmentDto(
-                        type = when (it) {
-                            is Attachment.Image -> NewAttachmentDto.Type.IMAGE
-                            is Attachment.Video -> NewAttachmentDto.Type.VIDEO
-                            is Attachment.Audio -> NewAttachmentDto.Type.AUDIO
-                        },
-                        media = it.uri.toUri().toUploadMedia(requireContext())
-                    )
-                }
-            )
-
-            viewModel.publish(dto)
+            viewModel.setContent(binding.inputEventContent.text.toString())
+            viewModel.publish(requireContext())
         }
 
 
         viewModel.eventStatus.observe(viewLifecycleOwner) {
             when (it) {
-                ERROR -> snack("SENDING ERROR")
-                LOADING -> snack("SENDING...")
-                SUCCESS -> navController.navigateUp()
+                is Status.Error -> snack(it.message)
+                Status.Loading -> snack("SENDING...")
+                Status.Success -> navController.navigateUp()
                 null -> {}
             }
         }
 
-        viewModel.speakers.observe(viewLifecycleOwner) {
+        viewModel.editableEvent.observe(viewLifecycleOwner) {
 
             binding.speakersChips.removeAllViews()
 
-            it.forEach { user ->
+            it.speakers.forEach { user ->
                 val chip = SpeakerChip(binding.speakersChips.context)
                 chip.setIconUrl(user.avatar)
                 chip.text = user.name
@@ -158,13 +84,28 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
                 }
                 binding.speakersChips.addView(chip)
             }
+
+            binding.inputEventContent.setText(it.content)
+
+            (it.type == EventType.ONLINE).let { online ->
+                binding.eventEditorInputLinkLayout.isSelected = online
+                binding.eventEditorInputLinkLayout.isVisible = online
+                binding.eventEditorInputGeoLayout.isSelected = !online
+                binding.eventEditorInputGeoLayout.isVisible = !online
+            }
+
+            binding.eventEditorSetDate.setText(it.dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE))
+            binding.eventEditorSetTime.setText(it.dateTime.format(DateTimeFormatter.ISO_TIME))
+
+            binding.attachmentPreview.isVisible = it.attachment != null
+
+            it.attachment
+                ?.let { att -> binding.attachmentPreview.setData(att) }
+                ?: binding.attachmentPreview.recycle()
         }
 
-        viewModel.isOnline.observe(viewLifecycleOwner) {
-            binding.eventEditorInputLinkLayout.isSelected = it
-            binding.eventEditorInputLinkLayout.isVisible = it
-            binding.eventEditorInputGeoLayout.isSelected = !it
-            binding.eventEditorInputGeoLayout.isVisible = !it
+        viewModel.locationName.observe(viewLifecycleOwner) {
+            binding.eventEditorInputGeo.setText(it ?: "Undefined location")
         }
 
         binding.eventEditorInputGeoLayout.setEndIconOnClickListener {
@@ -191,20 +132,9 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             timePicker.show(childFragmentManager, null)
         }
 
-        viewModel.date.observe(viewLifecycleOwner) {
-            binding.eventEditorSetDate.setText(it?.toStringDate())
-        }
-
-        viewModel.time.observe(viewLifecycleOwner) {
-            binding.eventEditorSetTime.setText(it.toString())
-        }
-
-        viewModel.location.observe(viewLifecycleOwner) {
-            binding.eventEditorInputGeo.setText(it?.name)
-        }
 
         timePicker.addOnPositiveButtonClickListener {
-            viewModel.setTime(TimeUnitsWrapper(timePicker.hour, timePicker.minute))
+            viewModel.setTime(timePicker.hour, timePicker.minute)
         }
 
 
@@ -212,7 +142,8 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             navController.navigate(
                 EventEditorFragmentDirections
                     .actionEventEditorFragmentToSelectUsersDialogFragment(
-                        viewModel.speakers.value?.map { it.id }?.toLongArray() ?: longArrayOf(),
+                        viewModel.editableEvent.value?.speakers?.map { it.id }?.toLongArray()
+                            ?: longArrayOf(),
                         editableType = PubType.EVENT
                     )
             )
@@ -236,19 +167,9 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
             val bundle = Bundle()
             bundle.putString(ArgKey.ATTACHMENT, PubType.EVENT.name)
             dialog.arguments = bundle
-            StorageBottomSheet().show(parentFragmentManager, "STORAGE")
-        }
-
-        viewModel.attachment.observe(viewLifecycleOwner) { attachment ->
-
-            binding.attachmentPreview.isVisible = attachment != null
-
-            attachment?.let { binding.attachmentPreview.setData(it) }
-                ?: binding.attachmentPreview.recycle()
-            binding.attachmentPreview.isVisible = attachment != null
+            dialog.show(parentFragmentManager, "STORAGE")
         }
     }
-
 }
 
 

@@ -112,7 +112,6 @@ class PostsRemoteMediator @Inject constructor(
     ): MediatorResult {
 
         val response = try {
-            log(loadType)
             when (loadType) {
                 REFRESH -> remoteKeyDao.getMax(RemoteKeysEntity.Key.POSTS)
                     ?.let { apiRequest { postApi.getAfter(it, state.config.initialLoadSize) } }
@@ -144,7 +143,15 @@ class PostsRemoteMediator @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             response.forEach { post ->
                 post.attachment?.let {
-                    if (it.url.startsWith("http")) att.emit(Pair(post.id, it))
+
+                    if (it.url.startsWith("http")) {
+
+                        val entity = attachmentsUtil.getAttachmentEntityFrom(post.id, it)
+
+                        postDao.insertAttachment(entity as PostAttachmentEntity)
+
+//                        att.emit(Pair(post.id, it))
+                    }
                 }
             }
         }

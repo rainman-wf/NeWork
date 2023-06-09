@@ -16,5 +16,5 @@
         android:title="My Location"
         android:checkable="true"
         app:showAsAction="always"
-        android:icon="@drawable/like_checkable"/>
+        android:icon="@drawable/location_off"/>
 </menu>

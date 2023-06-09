@@ -8,6 +8,9 @@ interface BaseDao<E> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(obj: E) : Long
 
+    @Upsert
+    fun upsert(obj: E) : Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(obj: List<E>): List<Long>
 
@@ -19,6 +22,8 @@ interface BaseDao<E> {
 
     @Delete
     fun delete(obj: E) : Int
+
+
 
     @Delete
     fun delete(obj: List<E>) : Int

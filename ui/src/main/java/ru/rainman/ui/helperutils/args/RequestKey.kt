@@ -1,0 +1,10 @@
+package ru.rainman.ui.helperutils.args
+
+enum class RequestKey {
+    EVENT_REQUEST_KEY_ATTACHMENT,
+    POST_REQUEST_KEY_ATTACHMENT,
+    EVENT_REQUEST_KEY_SPEAKERS,
+    POST_REQUEST_KEY_MENTIONED,
+    EVENT_REQUEST_KEY_LOCATION
+}
+

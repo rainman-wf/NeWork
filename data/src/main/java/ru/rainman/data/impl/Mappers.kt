@@ -103,7 +103,7 @@ fun PostWithUsers.toModel() = Post(
     coordinates = postEntity.coordinates,
     link = linkPreview?.toModel(),
     likeOwnerIds = likeOwners.map { it.toModel() },
-    mentionIds = mentioned.map { it.toModel() },
+    mentioned = mentioned.map { it.toModel() },
     mentionedMe = postEntity.mentionedMe,
     likedByMe = postEntity.likedByMe,
     attachment = attachment?.toModel(),
@@ -183,7 +183,7 @@ fun PublicationLinkPreviewEntity.toModel() = LinkPreview(
 )
 
 fun NewEventDto.toRequestBody(attachment: AttachmentRequestBody? = null) = EventCreateRequest(
-    id = 0,
+    id = id,
     content = content,
     dateTime = dateTime.toString(),
     coordinates = coordinates?.let {
@@ -199,7 +199,7 @@ fun NewEventDto.toRequestBody(attachment: AttachmentRequestBody? = null) = Event
 )
 
 fun NewPostDto.toRequestBody(attachment: AttachmentRequestBody? = null) = PostCreateRequest(
-    id = 0,
+    id = id,
     content = content,
     coordinates = coordinates?.let {
         Coordinates(

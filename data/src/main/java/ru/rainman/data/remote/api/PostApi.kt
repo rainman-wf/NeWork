@@ -25,7 +25,7 @@ interface PostApi {
     suspend fun getById(@Path("post_id") id: Long) : Response<PostResponse>
 
     @DELETE("posts/{post_id}")
-    suspend fun delete(@Path("post_id") id: Long)
+    suspend fun delete(@Path("post_id") id: Long) : Response<Unit>
 
     @GET("posts/{post_id}/after")
     suspend fun getAfter(@Path("post_id") id: Long, @Query("count") count: Int) : Response<List<PostResponse>>

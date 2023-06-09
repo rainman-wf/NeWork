@@ -1,6 +1,5 @@
 package ru.rainman.data.impl.map
 
-import com.example.common_utils.log
 import com.example.common_utils.toGeometry
 import com.example.common_utils.toModel
 import com.example.common_utils.toPoint

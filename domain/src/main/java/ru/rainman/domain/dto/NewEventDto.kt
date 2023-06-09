@@ -5,6 +5,7 @@ import ru.rainman.domain.model.EventType
 import java.time.LocalDateTime
 
 data class NewEventDto(
+    val id: Long,
     val content: String,
     val dateTime: LocalDateTime,
     val coordinates: Coordinates? = null,

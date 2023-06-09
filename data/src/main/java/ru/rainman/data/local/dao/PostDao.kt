@@ -28,7 +28,7 @@ interface PostDao : BaseDao<PostEntity> {
     suspend fun likedByMe(postId: Long) : Boolean
 
     @Query("SELECT * FROM posts WHERE post_id = :postId")
-    suspend fun getById(postId: Long): PostWithUsers
+    suspend fun getById(postId: Long): PostWithUsers?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertLikOwners(list: List<PostsLikeOwnersCrossRef>)
@@ -74,5 +74,8 @@ interface PostDao : BaseDao<PostEntity> {
         insertMentioned(publicationUsersDiff.toInsert)
         deleteMentioned(publicationUsersDiff.toDelete)
     }
+
+    @Query("DELETE FROM posts WHERE post_id = :id")
+    suspend fun delete(id: Long)
 
 }

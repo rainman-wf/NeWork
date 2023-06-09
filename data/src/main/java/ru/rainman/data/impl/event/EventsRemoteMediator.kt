@@ -10,9 +10,9 @@ import androidx.room.withTransaction
 import com.example.common_utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.rainman.data.hasCorrectLink
 import ru.rainman.data.impl.AttachmentsUtil
 import ru.rainman.data.impl.LinkPreviewBuilder
@@ -26,7 +26,6 @@ import ru.rainman.data.local.AppDb
 import ru.rainman.data.local.dao.EventDao
 import ru.rainman.data.local.dao.RemoteKeyDao
 import ru.rainman.data.local.dao.UserDao
-import ru.rainman.data.local.entity.AttachmentEntity
 import ru.rainman.data.local.entity.AttachmentType
 import ru.rainman.data.local.entity.AttachmentType.*
 import ru.rainman.data.local.entity.EventAttachmentEntity
@@ -55,6 +54,8 @@ class EventsRemoteMediator @Inject constructor(
 ) : RemoteMediator<Int, EventWithUsers>() {
 
     private val att = MutableSharedFlow<Pair<Long, Attachment>>()
+
+
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -121,7 +122,6 @@ class EventsRemoteMediator @Inject constructor(
     ): MediatorResult {
 
         val response = try {
-            log(loadType)
             when (loadType) {
                 REFRESH -> remoteKeyDao.getMax(RemoteKeysEntity.Key.EVENTS)
                     ?.let { apiRequest { eventApi.getAfter(it, state.config.initialLoadSize) } }
@@ -151,7 +151,7 @@ class EventsRemoteMediator @Inject constructor(
         insertNewUsersFromResponse(response)
         usersJobsSyncUtil.sync(response.map { it.authorId }.toSet())
 
-        CoroutineScope(Dispatchers.IO).async {
+        withContext(Dispatchers.IO) {
             val linkPreview = response
                 .filter { it.hasCorrectLink() }
                 .map { LinkPreviewBuilder.poll(it.link!!).toEventLinkEntity(it.id) }
@@ -161,7 +161,9 @@ class EventsRemoteMediator @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             response.forEach { event ->
                 event.attachment?.let {
-                    if (it.url.startsWith("http")) att.emit(Pair(event.id, it))
+                    if (it.url.startsWith("http"))
+                        eventDao.insertAttachment(attachmentsUtil.getAttachmentEntityFrom(event.id, event.attachment) as EventAttachmentEntity)
+//                        att.emit(Pair(event.id, it))
                 }
             }
         }

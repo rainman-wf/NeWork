@@ -5,7 +5,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.loader.content.Loader
-import com.example.common_utils.log
 import ru.rainman.domain.model.Attachment
 import ru.rainman.ui.storage.abstractions.MediaLoadManager
 
@@ -16,18 +15,14 @@ class ImageLoaderManager(
 
     override val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
-    override val projection = listOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME)
+    override val projection = listOf(MediaStore.Images.Media._ID)
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
 
         data?.let {
             val columnIndexData = it.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
-            val columngData = it.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-            val colNmae = it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-            while (it.moveToNext()) {
 
-                log(it.getString(columngData))
-                log(it.getString(colNmae))
+            while (it.moveToNext()) {
 
                 resultList.add(
                     Attachment.Image(

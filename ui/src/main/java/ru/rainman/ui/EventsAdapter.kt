@@ -1,7 +1,9 @@
 package ru.rainman.ui
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Event
+import ru.rainman.domain.model.Post
 import ru.rainman.ui.databinding.CardEventBinding
 import ru.rainman.ui.helperutils.CurrentPlayedItemState
 import ru.rainman.ui.helperutils.PubType
@@ -66,7 +69,7 @@ class EventsAdapter(
                 participate.isChecked = event.participatedByMe
 
                 header.more.setOnClickListener {
-                    onEventClickListener.onMoreClicked(event.id)
+                    showPopupMenu(binding.header.more, event)
                 }
 
                 like.setOnClickListener {
@@ -90,6 +93,22 @@ class EventsAdapter(
                 }
             }
         }
+
+        private fun showPopupMenu(view: View, event: Event) {
+            with(PopupMenu(view.context, view)) {
+                inflate(R.menu.publication_menu)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.edit -> setListener(onEventClickListener.onEditClicked(event.id))
+                        R.id.delete -> setListener(onEventClickListener.onDeleteClicked(event.id))
+                        else -> false
+                    }
+                }
+                show()
+            }
+        }
+
+        private val setListener: (Unit) -> Boolean = { true }
     }
 
     class Diff : DiffUtil.ItemCallback<Event>() {

@@ -36,7 +36,6 @@ class WallRemoteMediator @Inject constructor(
 
     var wallOwnerId: Long = 0
         set(value) {
-            log(value)
             if (value > 0L) remoteKeyDao.insert(WallRemoteKeyEntity(value))
             field = value
         }
@@ -47,7 +46,6 @@ class WallRemoteMediator @Inject constructor(
     ): MediatorResult {
 
         val response = try {
-            log(loadType)
             when (loadType) {
                 REFRESH -> remoteKeyDao.getMax(wallOwnerId)
                     ?.let {
@@ -81,12 +79,8 @@ class WallRemoteMediator @Inject constructor(
         val maxId = response.first().id
         val minId = response.last().id
 
-        log ("ids max = $maxId and min = $minId")
-
         insertNewUsersFromResponse(response)
         usersJobsSyncUtil.sync(response.map { it.authorId }.toSet())
-
-        log("user jobs synced")
 
         appDb.withTransaction {
             when (loadType) {

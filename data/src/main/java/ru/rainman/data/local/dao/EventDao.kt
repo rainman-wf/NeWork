@@ -37,7 +37,7 @@ interface EventDao : BaseDao<EventEntity> {
 
     @Transaction
     @Query("SELECT * FROM events WHERE event_id = :eventId")
-    suspend fun getById(eventId: Long) : EventWithUsers
+    suspend fun getById(eventId: Long) : EventWithUsers?
 
     @Query("SELECT * FROM events_like_owners_cross_refs WHERE event_id = :eventId")
     suspend fun getLikeOwners(eventId: Long) : List<EventsLikeOwnersCrossRef>
@@ -83,6 +83,9 @@ interface EventDao : BaseDao<EventEntity> {
         insertSpeakers(speakers)
         insertParticipants(participants)
     }
+
+    @Query("DELETE FROM events WHERE event_id = :id")
+    suspend fun delete(id: Long)
 }
 
 

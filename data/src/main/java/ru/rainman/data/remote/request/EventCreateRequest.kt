@@ -5,7 +5,7 @@ import ru.rainman.data.remote.response.Attachment
 import ru.rainman.data.remote.response.Coordinates
 
 data class EventCreateRequest(
-    val id: Int,
+    val id: Long,
     val content: String?,
     @SerializedName("datetime")
     val dateTime: String?,

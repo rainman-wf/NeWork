@@ -10,7 +10,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.example.common_utils.log
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rainman.ui.databinding.FragmentMainBinding
 import ru.rainman.ui.helperutils.getNavController
@@ -38,8 +37,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         viewModel.me.observe(viewLifecycleOwner) { me ->
             val authenticated = me?.token != null
-
-            log(me)
 
             binding.mainToolBar.menu.clear()
             binding.mainToolBar.inflateMenu(if (authenticated) R.menu.auth_authenticated_menu else R.menu.auth_unaithicated_menu)

@@ -67,6 +67,10 @@ fun Fragment.toast(msg: String) {
     Toast.makeText(this.requireContext(), msg, Toast.LENGTH_SHORT).show()
 }
 
+fun Fragment.activityFragmentManager() : FragmentManager {
+    return this.requireActivity().supportFragmentManager
+}
+
 
 fun Int.asDuration(): String {
     val seconds = this / 1000
@@ -75,10 +79,11 @@ fun Int.asDuration(): String {
     return "$durationMinutes:$durationSeconds"
 }
 
-fun Fragment.showVideoDialog(uri: String) {
+fun Fragment.showVideoDialog(uri: String, ratio: Float) {
     val dialog = VideoPlayerDialogFragment()
     val bundle = Bundle()
     bundle.putString("uri", uri)
+    bundle.putFloat("ratio", ratio)
     dialog.arguments = bundle
     dialog.show(parentFragmentManager, null)
 }

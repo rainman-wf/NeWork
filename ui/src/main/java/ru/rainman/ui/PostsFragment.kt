@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import ru.rainman.domain.model.Attachment
 import ru.rainman.ui.databinding.FragmentPostsBinding
 import ru.rainman.ui.helperutils.PubType
+import ru.rainman.ui.helperutils.activityFragmentManager
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.showVideoDialog
 import ru.rainman.ui.helperutils.snack
@@ -33,15 +34,19 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
         val adapter = PostsAdapter(parentFragment.currentPlayedItem, object : OnPostClickListener {
             override fun onLikeClicked(postId: Long) {
-                snack("like $postId")
+                viewModel.like(postId)
             }
 
             override fun onShareClicked(postId: Long) {
                 snack("share $postId")
             }
 
-            override fun onMoreClicked(postId: Long) {
-                snack("more $postId")
+            override fun onEditClicked(postId: Long) {
+               activityFragmentManager().getNavController(R.id.out_of_main_nav_host).navigate(MainFragmentDirections.actionMainFragmentToPostEditorFragment(postId))
+            }
+
+            override fun onDeleteClicked(postId: Long) {
+                viewModel.delete(postId)
             }
 
             override fun onAuthorClicked(postId: Long) {
@@ -56,7 +61,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
                 when (attachment) {
                     is Attachment.Video -> {
                         parentFragment.stopAudio()
-                        showVideoDialog(attachment.uri)
+                        showVideoDialog(attachment.uri, attachment.ratio)
                     }
                     is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.POST, postId)
                     else -> {}
@@ -65,6 +70,8 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         })
 
         binding.postList.adapter = adapter
+
+        binding.postList.itemAnimator = null
 
         lifecycleScope.launch {
             viewModel.posts.collectLatest {

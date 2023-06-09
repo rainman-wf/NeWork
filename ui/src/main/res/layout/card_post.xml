@@ -58,13 +58,17 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.google.android.material.checkbox.MaterialCheckBox
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/like_checkable"
-                android:padding="8dp"
-                android:text="Like" />
+                style="@style/Widget.Material3.Button.TextButton.Dialog"
+                android:checkable="true"
+                android:textColor="?attr/colorOnSurface"
+                app:icon="@drawable/like_checkable"
+                app:iconTint="?attr/colorOnSurface"
+                android:text="Like"/>
+
 
             <View
                 android:layout_width="0dp"

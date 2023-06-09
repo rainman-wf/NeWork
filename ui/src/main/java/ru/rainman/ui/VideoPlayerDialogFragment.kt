@@ -5,6 +5,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.DialogFragment
 import androidx.media3.common.MediaItem
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -28,10 +30,15 @@ class VideoPlayerDialogFragment : DialogFragment(R.layout.dialog_fragment_video_
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val source = requireArguments().getString("uri") ?: throw IllegalArgumentException("args missed")
+        val ratio = requireArguments().getFloat("ratio")
 
         player.playWhenReady = true
 
         binding.playerView.player = player
+
+        binding.playerView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            dimensionRatio = ratio.toString().take(6)
+        }
 
         player.addMediaItem(MediaItem.fromUri(source))
         player.prepare()

@@ -85,11 +85,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+        android:backgroundTint="?attr/colorSecondaryContainer"
         app:menuAlignmentMode="start"
         app:fabAlignmentMode="end"
         app:fabCradleVerticalOffset="14dp"
-        app:menu="@menu/post_editor_bar"
-        />
+        app:menu="@menu/post_editor_bar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/send"
@@ -98,6 +98,6 @@
         app:layout_anchor="@id/bottom_bar"
         android:layout_margin="16dp"
         android:src="@drawable/done"
-        app:maxImageSize="32dp" />
+        app:maxImageSize="32dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
