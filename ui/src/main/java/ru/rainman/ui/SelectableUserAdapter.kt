@@ -17,7 +17,6 @@ class SelectableUserAdapter (private val onItemClickListener: (SelectableUser) -
 
         fun bind(user: SelectableUser) {
             binding.selectableFullName.text = user.user.name
-            binding.selectableLogin.text = user.user.login
             binding.selectedUser.isChecked = user.selected
             binding.root.setOnClickListener {
                 onItemClickListener(user)

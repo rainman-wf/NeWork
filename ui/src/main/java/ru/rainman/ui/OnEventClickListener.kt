@@ -1,14 +1,10 @@
 package ru.rainman.ui
 
-import ru.rainman.domain.model.Attachment
+import ru.rainman.domain.model.Event
+import ru.rainman.domain.model.Post
 
-interface OnEventClickListener {
-    fun onLikeClicked(eventId: Long)
+interface OnEventClickListener : OnPublicationClickListener<Event> {
     fun onParticipateClicked(eventId: Long)
-    fun onShareClicked(eventId: Long)
-    fun onEditClicked(postId: Long)
-    fun onDeleteClicked(postId: Long)
-    fun onAuthorClicked(eventId: Long)
-    fun onEventClicked(eventId: Long)
-    fun onPlayClicked(postId: Long, attachment: Attachment)
 }
+
+interface OnPostClickListener : OnPublicationClickListener<Post>

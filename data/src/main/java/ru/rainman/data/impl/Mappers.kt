@@ -1,6 +1,6 @@
 package ru.rainman.data.impl
 
-import com.example.common_utils.toDateTime
+import ru.rainman.common.toDateTime
 import ru.rainman.data.local.entity.*
 import ru.rainman.data.local.entity.crossref.*
 import ru.rainman.data.remote.request.EventCreateRequest
@@ -16,20 +16,9 @@ import ru.rainman.data.remote.response.Attachment as AttachmentRequestBody
 
 fun UserWithJob.toModel() = User(
     id = userEntity.userId,
-    login = userEntity.login,
     name = userEntity.name,
     avatar = userEntity.avatar,
-    favorite = userIdEntity?.userId == userEntity.userId,
-    currentJob = job?.toModel()
-)
-
-fun JobEntity.toModel() = Job(
-    id = id,
-    name = name,
-    position = position,
-    start = start.toDateTime(),
-    finish = finish?.toDateTime(),
-    link = link
+    favorite = userIdEntity?.userId == userEntity.userId
 )
 
 fun JobResponse.toEntity(userId: Long) = JobEntity(
@@ -44,14 +33,12 @@ fun JobResponse.toEntity(userId: Long) = JobEntity(
 
 fun UserResponse.toEntity() = UserEntity(
     userId = id,
-    login = login,
     name = name,
-    avatar = avatar,
-    jobId = null
+    avatar = avatar
 )
 
 fun EventResponse.toEntity() = EventEntity(
-    eventId = id,
+    id = id,
     authorId = authorId,
     content = content,
     datetime = datetime,
@@ -61,11 +48,10 @@ fun EventResponse.toEntity() = EventEntity(
     likedByMe = likedByMe,
     participatedByMe = participatedByMe,
     ownedByMe = ownedByMe,
-    link = link
 )
 
 fun EventWithUsers.toModel() = Event(
-    id = eventEntity.eventId,
+    id = eventEntity.id,
     author = author.toModel(),
     content = eventEntity.content,
     datetime = eventEntity.datetime.toDateTime(),
@@ -96,7 +82,7 @@ fun AttachmentEntity.toModel(): Attachment {
 }
 
 fun PostWithUsers.toModel() = Post(
-    id = postEntity.postId,
+    id = postEntity.id,
     author = author.toModel(),
     content = postEntity.content,
     published = postEntity.published.toDateTime(),
@@ -111,7 +97,7 @@ fun PostWithUsers.toModel() = Post(
 )
 
 fun PostResponse.toEntity() = PostEntity(
-    postId = id,
+    id = id,
     authorId = authorId,
     content = content,
     published = published,
@@ -119,7 +105,7 @@ fun PostResponse.toEntity() = PostEntity(
     mentionedMe = mentionedMe,
     likedByMe = likedByMe,
     ownedByMe = ownedByMe,
-    link = link
+    attachmentKey = null
 )
 
 fun List<PostResponse>.fetchPostLikeOwners() =
@@ -147,34 +133,11 @@ fun List<EventResponse>.fetchParticipants() =
         event.participantsIds.map { EventsParticipantsCrossRef(event.id, it) }
     }.flatten()
 
-fun JobEntity.compareWith(jobEntity: JobEntity?): Boolean {
-    return jobEntity != null && id == jobEntity.id && finish == jobEntity.finish && link == jobEntity.link
-}
-
-fun EventEntity.compareWith(eventEntity: EventEntity): Boolean {
-    return content == eventEntity.content &&
-            datetime == eventEntity.datetime &&
-            coordinates == eventEntity.coordinates &&
-            type == eventEntity.type &&
-            link == eventEntity.link &&
-            participatedByMe == eventEntity.participatedByMe &&
-            likedByMe == eventEntity.likedByMe
-}
-
-fun PostEntity.compareWith(postEntity: PostEntity): Boolean {
-    return content == postEntity.content &&
-            coordinates == postEntity.coordinates &&
-            link == postEntity.link &&
-            likedByMe == postEntity.likedByMe &&
-            mentionedMe == postEntity.mentionedMe
-}
-
-fun LinkPreview.toEventLinkEntity(eventId: Long) = EventLinkPreviewEntity(
-    publicationId = eventId,
+fun LinkPreview.toEntity() = LinkPreviewEntity(
     linkPreview = LinkPreview(url, title, description, image, siteName)
 )
 
-fun PublicationLinkPreviewEntity.toModel() = LinkPreview(
+fun LinkPreviewEntity.toModel() = LinkPreview(
     url = linkPreview.url,
     title = linkPreview.title,
     description = linkPreview.description,

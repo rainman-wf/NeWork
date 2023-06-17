@@ -5,5 +5,6 @@ import ru.rainman.domain.model.Event
 
 interface EventRepository : PublicationsRepository<Event, NewEventDto> {
 
-    suspend fun participate(id: Long) : Event
+    suspend fun participate(id: Long)
+    suspend fun leave(id: Long)
 }

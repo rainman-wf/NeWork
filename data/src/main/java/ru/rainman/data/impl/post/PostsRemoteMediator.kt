@@ -1,35 +1,26 @@
 package ru.rainman.data.impl.post
 
-import android.media.MediaMetadataRetriever
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.LoadType.*
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.common_utils.log
+import ru.rainman.common.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import ru.rainman.data.impl.AttachmentsUtil
-import ru.rainman.data.impl.fetchMentioned
-import ru.rainman.data.impl.fetchPostLikeOwners
-import ru.rainman.data.impl.toEntity
-import ru.rainman.data.impl.user.UsersJobsSyncUtil
+import kotlinx.coroutines.withContext
+import ru.rainman.common.POSTS_REMOTE_KEYS
+import ru.rainman.data.apiRequest
+import ru.rainman.data.impl.user.UsersSyncUtil
 import ru.rainman.data.local.AppDb
-import ru.rainman.data.local.dao.PostDao
 import ru.rainman.data.local.dao.RemoteKeyDao
 import ru.rainman.data.local.dao.UserDao
-import ru.rainman.data.local.entity.AttachmentType
-import ru.rainman.data.local.entity.PostAttachmentEntity
 import ru.rainman.data.local.entity.PostWithUsers
 import ru.rainman.data.local.entity.RemoteKeysEntity
+import ru.rainman.data.local.entity.UserEntity
 import ru.rainman.data.remote.api.PostApi
-import ru.rainman.data.remote.api.UserApi
-import ru.rainman.data.remote.apiRequest
-import ru.rainman.data.remote.response.Attachment
-import ru.rainman.data.remote.response.PostResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,72 +28,19 @@ import javax.inject.Singleton
 @Singleton
 class PostsRemoteMediator @Inject constructor(
     private val postApi: PostApi,
-    private val postDao: PostDao,
     private val remoteKeyDao: RemoteKeyDao,
+    private val usersSyncUtil: UsersSyncUtil,
     private val appDb: AppDb,
     private val userDao: UserDao,
-    private val userApi: UserApi,
-    private val usersJobsSyncUtil: UsersJobsSyncUtil,
-    private val attachmentsUtil: AttachmentsUtil
+    private val postSyncUtil: PostSyncUtil
 ) : RemoteMediator<Int, PostWithUsers>() {
 
-    private val att = MutableSharedFlow<Pair<Long, Attachment>>()
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private var pageIdsRange: LongRange? = null
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            remoteKeyDao.insert(RemoteKeysEntity(RemoteKeysEntity.Key.POSTS, null, null))
-            att.collect {
-                val retriever = MediaMetadataRetriever()
-                when (val type = AttachmentType.valueOf(it.second.type)) {
-                    AttachmentType.IMAGE -> {
-                        postDao.insertAttachment(
-                            PostAttachmentEntity(
-                                it.first,
-                                it.second.url,
-                                type,
-                                null,
-                                null,
-                                null,
-                                null
-                            )
-                        )
-                    }
-                    AttachmentType.VIDEO -> {
-                        retriever.setDataSource(it.second.url)
-                        val duration = attachmentsUtil.getDuration(retriever)
-                        val ratio = attachmentsUtil.getVideoRatio(retriever)
-                        postDao.insertAttachment(
-                            PostAttachmentEntity(
-                                it.first,
-                                it.second.url,
-                                type,
-                                duration,
-                                ratio,
-                                null,
-                                null
-                            )
-                        )
-                    }
-
-                    AttachmentType.AUDIO -> {
-                        retriever.setDataSource(it.second.url)
-                        val duration = attachmentsUtil.getDuration(retriever)
-                        val artist = attachmentsUtil.getArtist(retriever)
-                        val title = attachmentsUtil.getTitle(retriever)
-                        postDao.insertAttachment(
-                            PostAttachmentEntity(
-                                it.first,
-                                it.second.url,
-                                type,
-                                duration,
-                                null,
-                                artist,
-                                title
-                            )
-                        )
-                    }
-                }
-            }
+        scope.launch {
+            remoteKeyDao.insert(RemoteKeysEntity(POSTS_REMOTE_KEYS, null, null))
         }
     }
 
@@ -112,79 +50,125 @@ class PostsRemoteMediator @Inject constructor(
     ): MediatorResult {
 
         val response = try {
-            when (loadType) {
-                REFRESH -> remoteKeyDao.getMax(RemoteKeysEntity.Key.POSTS)
-                    ?.let { apiRequest { postApi.getAfter(it, state.config.initialLoadSize) } }
-                    ?: apiRequest { postApi.getLatest(state.config.initialLoadSize) }
+            when (loadType.log()) {
+                REFRESH ->
+                    remoteKeyDao.getMax(POSTS_REMOTE_KEYS)
+                        ?.let {
+                            apiRequest { postApi.getAfter(it, state.config.initialLoadSize) }
+                                .plus(
+                                    apiRequest {
+                                        postApi.getBefore(
+                                            it + 1,
+                                            state.config.initialLoadSize
+                                        )
+                                    }.also {
+                                        it.lastOrNull()?.let { last ->
+                                            it.firstOrNull()?.let { first ->
+                                                pageIdsRange = last.id..first.id
+                                            }
+                                        }
+                                    }
+                                )
+                        } ?: apiRequest { postApi.getLatest(state.config.initialLoadSize) }
 
-                PREPEND -> remoteKeyDao.getMax(RemoteKeysEntity.Key.POSTS)
-                    ?.let { apiRequest { postApi.getAfter(it, state.config.initialLoadSize) } }
+                PREPEND -> remoteKeyDao.getMax(POSTS_REMOTE_KEYS)
+                    ?.let {
+                        apiRequest { postApi.getAfter(it, state.config.initialLoadSize) }
+                            .also {
+                                it.lastOrNull()?.let { last ->
+                                    it.firstOrNull()?.let { first ->
+                                        pageIdsRange = last.id..first.id
+                                    }
+                                }
+                            }
+                    }
                     ?: return MediatorResult.Success(false)
 
-                APPEND -> remoteKeyDao.getMin(RemoteKeysEntity.Key.POSTS)
-                    ?.let { apiRequest { postApi.getBefore(it, state.config.initialLoadSize) } }
+                APPEND -> remoteKeyDao.getMin(POSTS_REMOTE_KEYS)
+                    ?.let {
+                        apiRequest { postApi.getBefore(it, state.config.initialLoadSize) }
+                            .also {
+                                it.lastOrNull()?.let { last ->
+                                    it.firstOrNull()?.let { first ->
+                                        pageIdsRange = last.id..first.id
+                                    }
+                                }
+                            }
+                    }
                     ?: return MediatorResult.Success(false)
             }
         } catch (e: Exception) {
             log(e.message)
+            pageIdsRange = null
             return MediatorResult.Error(e)
         }
 
         if (response.isEmpty()) {
-            return MediatorResult.Success(false)
+            pageIdsRange = null
+            log("empty response")
+            return MediatorResult.Success(true)
         }
 
         val maxId = response.first().id
         val minId = response.last().id
 
-        insertNewUsersFromResponse(response)
-        usersJobsSyncUtil.sync(response.map { it.authorId }.toSet())
+        val users = response.map {
+            it.users.map { entry ->
+                UserEntity(
+                    entry.key,
+                    entry.value.name,
+                    entry.value.avatar
+                )
+            }.plus(
+                UserEntity(
+                    it.authorId,
+                    it.author,
+                    it.authorAvatar
+                )
+            )
+        }.flatten().toSet()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            response.forEach { post ->
-                post.attachment?.let {
+        userDao.upsert(users.toList())
 
-                    if (it.url.startsWith("http")) {
-
-                        val entity = attachmentsUtil.getAttachmentEntityFrom(post.id, it)
-
-                        postDao.insertAttachment(entity as PostAttachmentEntity)
-
-//                        att.emit(Pair(post.id, it))
-                    }
-                }
+        scope.launch {
+            withContext(coroutineContext) {
+                usersSyncUtil.sync(users)
             }
         }
 
         appDb.withTransaction {
             when (loadType) {
                 REFRESH -> {
-                    remoteKeyDao.setMin(minId, RemoteKeysEntity.Key.POSTS)
-                    remoteKeyDao.setMax(maxId, RemoteKeysEntity.Key.POSTS)
+                    remoteKeyDao.setMin(POSTS_REMOTE_KEYS, minId)
+                    remoteKeyDao.setMax(POSTS_REMOTE_KEYS, maxId)
                 }
 
-                PREPEND -> remoteKeyDao.setMax(maxId, RemoteKeysEntity.Key.POSTS)
-                APPEND -> remoteKeyDao.setMin(minId, RemoteKeysEntity.Key.POSTS)
+                PREPEND -> remoteKeyDao.setMax(POSTS_REMOTE_KEYS, maxId)
+                APPEND -> remoteKeyDao.setMin(POSTS_REMOTE_KEYS, minId)
+
             }
 
-            postDao.batchInsert(
-                entity = response.map { it.toEntity() },
-                likeOwners = response.fetchPostLikeOwners(),
-                mentioned = response.fetchMentioned(),
-            )
+            postSyncUtil.sync(response, pageIdsRange)
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+//            withContext(coroutineContext) {
+//                response
+//                    .filter { it.link != null && it.link.startsWith("http") }
+//                    .forEach {
+//                        withContext(coroutineContext) {
+//                            postDao.insertLinkPreview(
+//                                it.id,
+//                                LinkPreviewBuilder.poll(it.link!!).toEntity()
+//                            )
+//                        }
+//                    }
+//            }
+        }
+
+        pageIdsRange = null
         return MediatorResult.Success(response.isEmpty())
     }
-
-
-    private suspend fun insertNewUsersFromResponse(response: List<PostResponse>) = buildList {
-        with(response) {
-            addAll(map { it.likeOwnerIds }.flatten())
-            addAll(map { it.mentionIds }.flatten())
-            addAll(map { it.authorId })
-        }
-    }
-        .minus(userDao.getIds().toSet())
-        .map { apiRequest { userApi.getById(it) }.toEntity() }
-        .apply { userDao.insert(this) }
 }
+

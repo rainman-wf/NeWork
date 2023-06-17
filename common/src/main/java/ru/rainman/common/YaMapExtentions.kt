@@ -1,4 +1,4 @@
-package com.example.common_utils
+package ru.rainman.common
 
 import com.yandex.mapkit.map.GeoObjectSelectionMetadata
 import com.yandex.mapkit.search.BusinessObjectMetadata

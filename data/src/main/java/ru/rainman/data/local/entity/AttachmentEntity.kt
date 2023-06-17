@@ -1,11 +1,16 @@
 package ru.rainman.data.local.entity
 
-open class AttachmentEntity(
-    open val publicationId: Long,
-    open val url: String,
-    open val type: AttachmentType,
-    open val duration: Int?,
-    open val ratio: Float?,
-    open val artist: String?,
-    open val title: String?
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "attachments")
+data class AttachmentEntity(
+    @PrimaryKey(autoGenerate = true)
+    val key: Long = 0,
+    val url: String,
+    val type: AttachmentType,
+    val duration: Int?,
+    val ratio: Float?,
+    val artist: String?,
+    val title: String?
 )

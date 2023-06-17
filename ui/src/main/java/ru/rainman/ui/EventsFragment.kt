@@ -32,46 +32,45 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
         val parentFragment = requireParentFragment() as PagerFragment
 
         val adapter =
-            EventsAdapter(parentFragment.currentPlayedItem, object : OnEventClickListener {
-                override fun onLikeClicked(eventId: Long) {
-                    viewModel.like(eventId)
+            EventListAdapter(parentFragment.currentPlayedItem, object : OnEventClickListener {
+                override fun onLikeClicked(id: Long) {
+                    viewModel.like(id)
                 }
 
                 override fun onParticipateClicked(eventId: Long) {
                     viewModel.participate(eventId)
                 }
 
-                override fun onShareClicked(eventId: Long) {
-                    snack("share $eventId")
+                override fun onShareClicked(id: Long) {
+                    snack("share $id")
                 }
 
-                override fun onEditClicked(postId: Long) {
-                    navController.navigate(MainFragmentDirections.actionMainFragmentToEventEditorFragment(postId))
+                override fun onEditClicked(id: Long) {
+                    navController.navigate(MainFragmentDirections.actionMainFragmentToEventEditorFragment(id))
                 }
 
-                override fun onDeleteClicked(postId: Long) {
-                    viewModel.delete(postId)
+                override fun onDeleteClicked(id: Long) {
+                    viewModel.delete(id)
                 }
 
-                override fun onAuthorClicked(eventId: Long) {
-                    snack("author $eventId")
+                override fun onAuthorClicked(id: Long) {
+                    snack("author $id")
                 }
 
-                override fun onEventClicked(eventId: Long) {
-                    snack("event $eventId")
+                override fun onBodyClicked(id: Long) {
+                    snack("event $id")
                 }
 
-                override fun onPlayClicked(postId: Long, attachment: Attachment) {
+                override fun onPlayClicked(id: Long, attachment: Attachment) {
                     when (attachment) {
                         is Attachment.Video -> {
                             parentFragment.stopAudio()
                             showVideoDialog(attachment.uri, attachment.ratio)
                         }
-                        is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.EVENT, postId)
+                        is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.EVENT, id)
                         else -> {}
                     }
                 }
-
             })
 
         binding.eventList.adapter = adapter

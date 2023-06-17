@@ -26,11 +26,6 @@
             android:defaultValue="USERS" />
     </fragment>
     <fragment
-        android:id="@+id/account"
-        android:name="ru.rainman.ui.UserInfoFragment"
-        android:label="Account"
-        tools:layout="@layout/fragment_user_info" />
-    <fragment
         android:id="@+id/wall"
         android:name="ru.rainman.ui.PostsFragment"
         android:label="Wall"

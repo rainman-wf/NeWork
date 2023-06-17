@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.common_utils.toModel
+import ru.rainman.common.toModel
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.VisibleRegion
 import com.yandex.mapkit.map.VisibleRegionUtils

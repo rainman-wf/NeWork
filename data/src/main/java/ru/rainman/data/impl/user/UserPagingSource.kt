@@ -4,6 +4,7 @@ import androidx.paging.PagingState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import ru.rainman.data.apiRequest
 import ru.rainman.data.impl.CustomPagingSource
 import ru.rainman.data.impl.toEntity
 import ru.rainman.data.impl.toModel
@@ -11,7 +12,6 @@ import ru.rainman.data.local.dao.JobDao
 import ru.rainman.data.local.dao.UserDao
 import ru.rainman.data.local.entity.UserWithJob
 import ru.rainman.data.remote.api.JobApi
-import ru.rainman.data.remote.apiRequest
 import ru.rainman.domain.model.User
 
 

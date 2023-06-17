@@ -12,7 +12,7 @@ interface BaseRepository<M : BaseModel, NO : NewObjectDto> {
 
     val data: Flow<PagingData<M>>
 
-    suspend fun create(newObjectDto: NO) : M?
+    suspend fun create(newObjectDto: NO)
     suspend fun getById(id: Long): M?
     suspend fun getByIds(ids: List<Long>) : List<M>
 }

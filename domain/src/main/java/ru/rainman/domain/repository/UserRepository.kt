@@ -15,7 +15,6 @@ interface UserRepository : BaseRepository<User, NewUserDto> {
     val flowableUsers: Flow<List<User>>
 
     suspend fun login(username: String, password: String)
-    suspend fun getJobsById(userId: Long): List<Job>
     suspend fun setFavorite(userId: Long, value: Boolean)
     suspend fun logOut()
 

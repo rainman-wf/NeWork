@@ -1,28 +1,24 @@
 package ru.rainman.data.impl.event
 
 import androidx.paging.PagingData
-import androidx.room.withTransaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import ru.rainman.data.apiRequest
+import ru.rainman.data.dbQuery
 import ru.rainman.data.impl.AttachmentsUtil
-import ru.rainman.data.impl.toEntity
 import ru.rainman.data.impl.toModel
 import ru.rainman.data.impl.toRequestBody
-import ru.rainman.data.local.AppDb
 import ru.rainman.data.local.dao.EventDao
-import ru.rainman.data.local.entity.EventAttachmentEntity
 import ru.rainman.data.remote.api.EventApi
 import ru.rainman.data.remote.api.MediaApi
-import ru.rainman.data.remote.apiRequest
 import ru.rainman.domain.dto.NewEventDto
 import ru.rainman.domain.model.Event
 import ru.rainman.domain.model.UploadMedia
 import ru.rainman.domain.repository.EventRepository
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,12 +30,11 @@ class EventRepositoryImpl @Inject constructor(
     private val eventSyncUtil: EventSyncUtil,
     private val mediaApi: MediaApi,
     private val attachmentsUtil: AttachmentsUtil,
-    private val db: AppDb
 ) : EventRepository {
 
     override val data: Flow<PagingData<Event>> = eventsPagedData.data
 
-    override suspend fun create(newObjectDto: NewEventDto): Event? {
+    override suspend fun create(newObjectDto: NewEventDto) {
 
         val attachment = newObjectDto.attachment?.let { dto ->
 
@@ -60,30 +55,12 @@ class EventRepositoryImpl @Inject constructor(
             }
         }
 
-        return withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
-            val event = try {
-                apiRequest { eventApi.create(newObjectDto.toRequestBody(attachment)) }
-            } catch (e: Exception) {
-                throw e
-            }
+        withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
+            val event =
+                listOf(apiRequest { eventApi.create(newObjectDto.toRequestBody(attachment)) })
 
-            try {
-                db.withTransaction {
-                    eventDao.insert(event.toEntity())
+            eventSyncUtil.sync(event, null)
 
-                    event.attachment?.let {
-                        eventDao.insertAttachment(
-                            attachmentsUtil.getAttachmentEntityFrom(
-                                event.id,
-                                it
-                            ) as EventAttachmentEntity
-                        )
-                    }
-                }
-            } catch (e: IOException) {
-                throw e
-            }
-            eventDao.getById(event.id)?.toModel()
         }
     }
 
@@ -97,35 +74,34 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun delete(id: Long) {
         withContext(repositoryScope.coroutineContext) {
-            try {
-                apiRequest { eventApi.delete(id) }
-                eventDao.delete(id)
-            } catch (e: Exception) {
-                throw e
-            }
+            apiRequest { eventApi.delete(id) }
+            dbQuery { eventDao.delete(id) }
         }
     }
 
-    override suspend fun like(id: Long): Event {
+    override suspend fun like(id: Long) {
+        withContext(repositoryScope.coroutineContext) {
+            val event = listOf(apiRequest { eventApi.like(id) })
+            eventSyncUtil.sync(event, null)
+        }
+    }
+
+    override suspend fun unlike(id: Long) {
+        withContext(repositoryScope.coroutineContext) {
+            eventSyncUtil.sync(apiRequest { eventApi.like(id) })
+        }
+    }
+
+    override suspend fun participate(id: Long) {
+        withContext(repositoryScope.coroutineContext) {
+            eventSyncUtil.sync(apiRequest { eventApi.crateParticipant(id) })
+        }
+    }
+
+    override suspend fun leave(id: Long) {
         return withContext(repositoryScope.coroutineContext) {
-            val likedByMe = eventDao.likedByMe(id)
-            val event = apiRequest {
-                if (!likedByMe) eventApi.like(id)
-                else eventApi.unlike(id)
-            }
-            eventSyncUtil.sync(event).toModel()
+            eventSyncUtil.sync(apiRequest { eventApi.deleteParticipant(id) })
         }
     }
 
-
-    override suspend fun participate(id: Long): Event {
-        return withContext(repositoryScope.coroutineContext) {
-            val participateByMe = eventDao.participatedByMe(id)
-            val event = apiRequest {
-                if (!participateByMe) eventApi.crateParticipant(id)
-                else eventApi.deleteParticipant(id)
-            }
-            eventSyncUtil.sync(event).toModel()
-        }
-    }
 }

@@ -9,7 +9,7 @@ import ru.rainman.data.local.dao.PostDao
 import ru.rainman.data.local.dao.RemoteKeyDao
 import ru.rainman.data.local.entity.*
 import ru.rainman.data.local.entity.EventEntity
-import ru.rainman.data.local.entity.EventLinkPreviewEntity
+import ru.rainman.data.local.entity.LinkPreviewEntity
 import ru.rainman.data.local.entity.FavoriteUserIdEntity
 import ru.rainman.data.local.entity.JobEntity
 import ru.rainman.data.local.entity.crossref.*
@@ -26,12 +26,9 @@ import ru.rainman.data.local.entity.crossref.*
         PostsLikeOwnersCrossRef::class,
         PostsMentionedUsersCrossRef::class,
         RemoteKeysEntity::class,
-        EventLinkPreviewEntity::class,
-        PostLinkPreviewEntity::class,
+        LinkPreviewEntity::class,
         FavoriteUserIdEntity::class,
-        WallRemoteKeyEntity::class,
-        EventAttachmentEntity::class,
-        PostAttachmentEntity::class
+        AttachmentEntity::class,
     ],
     version = 1
 )

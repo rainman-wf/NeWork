@@ -85,7 +85,14 @@ class AttachmentView(
         binding.image.isVisible = true
         binding.title.isVisible = false
         (attachment as Attachment.Image).let {
-            binding.image.loadBitmap(it.uri, R.drawable.image)
+            binding.image.updateLayoutParams<LayoutParams> {
+                dimensionRatio = it.ratio.toString()
+            }
+            Glide.with(binding.root.context)
+                .load(it.uri)
+                .placeholder(R.drawable.outline_ondemand_video_24)
+                .error(R.drawable.outline_ondemand_video_24)
+                .into(binding.image)
         }
         resetMediaMetadata()
     }
@@ -145,8 +152,8 @@ class AttachmentView(
         setType()
     }
 
-    private fun setType() {
-        when (attachment) {
+    private fun setType()  {
+        return when (attachment) {
             is Attachment.Video -> setVideo()
             is Attachment.Audio -> setAudio()
             is Attachment.Image -> setImage()

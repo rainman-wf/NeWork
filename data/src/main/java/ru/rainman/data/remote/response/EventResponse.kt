@@ -3,24 +3,24 @@ package ru.rainman.data.remote.response
 import com.google.gson.annotations.SerializedName
 
 data class EventResponse(
-    val id: Long,
-    val authorId: Long,
-    val author: String,
-    val authorAvatar: String?,
+    override val id: Long,
+    override val authorId: Long,
+    override val author: String,
+    override val authorAvatar: String?,
     val authorJob: String?,
-    val content: String,
+    override val content: String,
     val datetime: String,
-    val published: String,
-    @SerializedName ("coords")
-    val coordinates: Coordinates?,
+    override val published: String,
+    @SerializedName("coords")
+    override val coordinates: Coordinates?,
     val type: String,
-    val likeOwnerIds: List<Long>,
-    val likedByMe: Boolean,
+    override val likeOwnerIds: List<Long>,
+    override val likedByMe: Boolean,
     val speakerIds: List<Long>,
     val participantsIds: List<Long>,
     val participatedByMe: Boolean,
-    val attachment: Attachment?,
-    val link: String?,
-    val ownedByMe: Boolean,
-    val users: Map<Long, UserPreviewResponse>
-)
+    override val attachment: Attachment?,
+    override val link: String?,
+    override val ownedByMe: Boolean,
+    override val users: Map<Long, UserPreviewResponse>
+) : PublicationResponse

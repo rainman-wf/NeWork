@@ -15,11 +15,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.common_utils.findPointOrNull
-import com.example.common_utils.log
-import com.example.common_utils.toModel
-import com.example.common_utils.toPoint
-import com.example.common_utils.toSearchResult
+import ru.rainman.common.findPointOrNull
+import ru.rainman.common.log
+import ru.rainman.common.toModel
+import ru.rainman.common.toPoint
+import ru.rainman.common.toSearchResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.yandex.mapkit.Animation

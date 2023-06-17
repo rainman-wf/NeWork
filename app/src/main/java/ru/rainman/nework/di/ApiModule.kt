@@ -7,8 +7,8 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.rainman.common.BASE_URL
 import ru.rainman.data.remote.api.*
-import ru.rainman.nework.BASE_URL
 import javax.inject.Singleton
 
 @Module

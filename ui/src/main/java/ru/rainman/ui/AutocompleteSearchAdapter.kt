@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import ru.rainman.domain.model.geo.SearchResult
 import ru.rainman.domain.model.geo.Point
 import ru.rainman.ui.databinding.ItemMapSearchResultsBinding
@@ -52,13 +54,3 @@ class AutocompleteSearchAdapter(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

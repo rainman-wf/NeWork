@@ -1,8 +1,8 @@
 package ru.rainman.data.impl.map
 
-import com.example.common_utils.toGeometry
-import com.example.common_utils.toModel
-import com.example.common_utils.toPoint
+import ru.rainman.common.toGeometry
+import ru.rainman.common.toModel
+import ru.rainman.common.toPoint
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.search.SearchOptions

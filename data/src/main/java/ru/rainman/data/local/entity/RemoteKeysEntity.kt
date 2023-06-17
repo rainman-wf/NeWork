@@ -6,11 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "remote_keys")
 data class RemoteKeysEntity(
     @PrimaryKey
-    val key: Key,
+    val key: Long,
     val max: Long?,
     val min: Long?
-) {
-    enum class Key {
-        POSTS, EVENTS
-    }
-}
+)

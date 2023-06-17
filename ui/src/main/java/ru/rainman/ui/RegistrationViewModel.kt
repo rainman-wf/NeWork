@@ -31,8 +31,8 @@ class RegistrationViewModel @Inject constructor(
     }
     fun create(login: String, password: String, name: String, avatar: UploadMedia?) {
         viewModelScope.launch {
-            val user = userRepository.create(NewUserDto(login, password, name, avatar))
-            if (user != null) userCreated.postValue(Unit)
+            userRepository.create(NewUserDto(login, password, name, avatar))
+            userCreated.postValue(Unit)
         }
     }
 }

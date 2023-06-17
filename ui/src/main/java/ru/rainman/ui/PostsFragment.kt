@@ -32,38 +32,38 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
         val parentFragment = requireParentFragment() as PagerFragment
 
-        val adapter = PostsAdapter(parentFragment.currentPlayedItem, object : OnPostClickListener {
-            override fun onLikeClicked(postId: Long) {
-                viewModel.like(postId)
+        val adapter = PostListAdapter(parentFragment.currentPlayedItem, object : OnPostClickListener {
+            override fun onLikeClicked(id: Long) {
+                viewModel.like(id)
             }
 
-            override fun onShareClicked(postId: Long) {
-                snack("share $postId")
+            override fun onShareClicked(id: Long) {
+                snack("share $id")
             }
 
-            override fun onEditClicked(postId: Long) {
-               activityFragmentManager().getNavController(R.id.out_of_main_nav_host).navigate(MainFragmentDirections.actionMainFragmentToPostEditorFragment(postId))
+            override fun onEditClicked(id: Long) {
+               activityFragmentManager().getNavController(R.id.out_of_main_nav_host).navigate(MainFragmentDirections.actionMainFragmentToPostEditorFragment(id))
             }
 
-            override fun onDeleteClicked(postId: Long) {
-                viewModel.delete(postId)
+            override fun onDeleteClicked(id: Long) {
+                viewModel.delete(id)
             }
 
-            override fun onAuthorClicked(postId: Long) {
-                snack("author $postId")
+            override fun onAuthorClicked(id: Long) {
+                snack("author $id")
             }
 
-            override fun onPostClicked(postId: Long) {
-                snack("post $postId")
+            override fun onBodyClicked(id: Long) {
+                snack("post $id")
             }
 
-            override fun onPlayClicked(postId: Long, attachment: Attachment) {
+            override fun onPlayClicked(id: Long, attachment: Attachment) {
                 when (attachment) {
                     is Attachment.Video -> {
                         parentFragment.stopAudio()
                         showVideoDialog(attachment.uri, attachment.ratio)
                     }
-                    is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.POST, postId)
+                    is Attachment.Audio -> parentFragment.playAudio(attachment.uri, PubType.POST, id)
                     else -> {}
                 }
             }

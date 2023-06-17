@@ -1,20 +1,19 @@
 package ru.rainman.data.impl
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import ru.rainman.common.log
 import ru.rainman.data.local.entity.AttachmentEntity
 import ru.rainman.data.local.entity.AttachmentType
-import ru.rainman.data.local.entity.PostAttachmentEntity
-import ru.rainman.data.remote.apiRequest
 import ru.rainman.data.remote.response.Attachment
 import ru.rainman.data.remote.response.MediaResponse
+import ru.rainman.data.remote.response.PublicationResponse
 import ru.rainman.domain.dto.NewAttachmentDto
 import ru.rainman.domain.model.RemoteMedia
 import ru.rainman.domain.model.UploadMedia
@@ -29,8 +28,7 @@ class AttachmentsUtil @Inject constructor() {
     private val converter = MutableSharedFlow<AttachmentConverterPrepareDto>()
 
     private data class AttachmentConverterPrepareDto(
-        val id: Long,
-        val attachment: Attachment,
+        val publicationResponse: PublicationResponse,
         val result: (AttachmentEntity) -> Unit
     )
 
@@ -53,7 +51,7 @@ class AttachmentsUtil @Inject constructor() {
         )
     }
 
-    fun getVideoRatio(retriever: MediaMetadataRetriever): Float {
+    private fun getVideoRatio(retriever: MediaMetadataRetriever): Float {
         val weight =
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toFloat()
                 ?: 16f
@@ -63,86 +61,98 @@ class AttachmentsUtil @Inject constructor() {
         return weight / height
     }
 
-    fun getArtist(retriever: MediaMetadataRetriever): String {
+    private fun getVImageRatio(url: String): Float {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(url, options)
+        return options.outWidth.toFloat() / options.outHeight
+    }
+
+    private fun getArtist(retriever: MediaMetadataRetriever): String {
         return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
             ?: "Unknown artist"
     }
 
-    fun getTitle(retriever: MediaMetadataRetriever): String {
+    private fun getTitle(retriever: MediaMetadataRetriever): String {
         return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
             ?: "unknown title"
     }
 
-    fun getDuration(retriever: MediaMetadataRetriever): Int {
+    private fun getDuration(retriever: MediaMetadataRetriever): Int {
         return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0
     }
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
             converter.collect {
-                withContext(this.coroutineContext) {
-                    val retriever = MediaMetadataRetriever()
-                    val attachment = when (val type = AttachmentType.valueOf(it.attachment.type)) {
 
-                        AttachmentType.IMAGE ->
-                            PostAttachmentEntity(
-                                it.id,
-                                it.attachment.url,
-                                type,
-                                null,
-                                null,
-                                null,
-                                null
-                            )
+                val attachmentResponse = it.publicationResponse.attachment!!
+
+                var duration: Int? = null
+                var ratio: Float? = null
+                var artist: String? = null
+                var title: String? = null
+                val type = AttachmentType.valueOf(attachmentResponse.type)
+
+                withContext(coroutineContext) {
+                    val retriever = MediaMetadataRetriever()
+
+                    if (type != AttachmentType.IMAGE)
+                        try {
+                            retriever.setDataSource(attachmentResponse.url)
+                        } catch (e: RuntimeException) {
+                            log(e.message)
+                            return@withContext
+                        }
+
+                    when (type) {
+                        AttachmentType.IMAGE -> {
+                            try {
+                                ratio = getVImageRatio(attachmentResponse.url)
+                            } catch (e: Exception) {
+                                log(e.message)
+                                return@withContext
+                            }
+                        }
 
                         AttachmentType.VIDEO -> {
-                            retriever.setDataSource(it.attachment.url)
-                            val duration = getDuration(retriever)
-                            val ratio = getVideoRatio(retriever)
-
-                            PostAttachmentEntity(
-                                it.id,
-                                it.attachment.url,
-                                type,
-                                duration,
-                                ratio,
-                                null,
-                                null
-                            )
+                            duration = getDuration(retriever)
+                            ratio = getVideoRatio(retriever)
                         }
 
                         AttachmentType.AUDIO -> {
-                            retriever.setDataSource(it.attachment.url)
-                            val duration = getDuration(retriever)
-                            val artist = getArtist(retriever)
-                            val title = getTitle(retriever)
-                            PostAttachmentEntity(
-                                it.id,
-                                it.attachment.url,
-                                type,
-                                duration,
-                                null,
-                                artist,
-                                title
-                            )
+                            duration = getDuration(retriever)
+                            artist = getArtist(retriever)
+                            title = getTitle(retriever)
                         }
                     }
 
-                    it.result.invoke(attachment)
+                    retriever.release()
                 }
+                val attachment = AttachmentEntity(
+                    0,
+                    it.publicationResponse.attachment!!.url,
+                    type,
+                    duration,
+                    ratio,
+                    artist,
+                    title
+                ).log()
+
+
+                it.result.invoke(attachment)
             }
         }
     }
 
-    suspend fun getAttachmentEntityFrom(postId: Long, attachment: Attachment): AttachmentEntity =
+    suspend fun getAttachmentEntityFrom(publicationResponse: PublicationResponse): AttachmentEntity? =
         suspendCoroutine { continuation ->
             CoroutineScope(Dispatchers.IO).launch {
                 converter.emit(
-                    AttachmentConverterPrepareDto(postId, attachment) {
+                    AttachmentConverterPrepareDto(publicationResponse) {
                         continuation.resume(it)
                     }
                 )
             }
         }
-
 }

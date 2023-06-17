@@ -1,32 +1,27 @@
 package ru.rainman.data.impl.post
 
-
 import androidx.paging.PagingData
-import androidx.room.withTransaction
-import com.example.common_utils.log
+import androidx.room.util.copy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import ru.rainman.common.log
+import ru.rainman.data.apiRequest
+import ru.rainman.data.dbQuery
 import ru.rainman.data.impl.AttachmentsUtil
 import ru.rainman.data.impl.toEntity
 import ru.rainman.data.impl.toModel
 import ru.rainman.data.impl.toRequestBody
-import ru.rainman.data.local.AppDb
 import ru.rainman.data.local.dao.PostDao
-import ru.rainman.data.local.entity.PostAttachmentEntity
 import ru.rainman.data.remote.api.MediaApi
 import ru.rainman.data.remote.api.PostApi
-import ru.rainman.data.remote.apiRequest
-import ru.rainman.data.remote.response.Attachment
 import ru.rainman.domain.dto.NewPostDto
 import ru.rainman.domain.model.Post
-import ru.rainman.domain.model.RemoteMedia
 import ru.rainman.domain.model.UploadMedia
 import ru.rainman.domain.repository.PostRepository
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,7 +33,6 @@ class PostRepositoryImpl @Inject constructor(
     private val postApi: PostApi,
     private val mediaApi: MediaApi,
     private val attachmentsUtil: AttachmentsUtil,
-    private val db: AppDb
 ) : PostRepository {
 
     override val data: Flow<PagingData<Post>> = postsPagedData.data
@@ -48,7 +42,7 @@ class PostRepositoryImpl @Inject constructor(
         postsPagedData.setWallOwnerId(userId)
     }
 
-    override suspend fun create(newObjectDto: NewPostDto): Post? {
+    override suspend fun create(newObjectDto: NewPostDto) {
         val attachment = newObjectDto.attachment?.let { dto ->
 
             attachmentsUtil.dtoToAttachment(dto) {
@@ -68,28 +62,9 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
 
-        return withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
-            val post = try {
-                apiRequest { postApi.create(newObjectDto.toRequestBody(attachment)) }.log()
-            } catch (e: Exception) {
-                throw e
-            }
-            try {
-                db.withTransaction {
-                    postDao.upsert(post.toEntity())
-                    post.attachment?.let {
-                        postDao.insertAttachment(
-                            attachmentsUtil.getAttachmentEntityFrom(
-                                post.id,
-                                it
-                            ) as PostAttachmentEntity
-                        )
-                    }
-                }
-            } catch (e: IOException) {
-                throw e
-            }
-            postDao.getById(post.id)?.toModel()
+        withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
+            val post = listOf(apiRequest { postApi.create(newObjectDto.toRequestBody(attachment)) })
+            postSyncUtil.sync(post, null)
         }
     }
 
@@ -103,23 +78,20 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun delete(id: Long) {
         withContext(repositoryScope.coroutineContext) {
-            try {
-                apiRequest { postApi.delete(id) }
-                postDao.delete(id)
-            } catch (e: Exception) {
-                throw e
-            }
+            apiRequest { postApi.delete(id) }
+            dbQuery { postDao.delete(id) }
         }
     }
 
-    override suspend fun like(id: Long): Post {
-        return withContext(repositoryScope.coroutineContext) {
-            val likedByMe = postDao.likedByMe(id)
-            val post = apiRequest {
-                if (!likedByMe) postApi.like(id)
-                else postApi.unlike(id)
-            }
-            postSyncUtil.sync(post).toModel()
+    override suspend fun like(id: Long) {
+        withContext(repositoryScope.coroutineContext) {
+           postSyncUtil.sync(apiRequest { postApi.like(id) })
+        }
+    }
+
+    override suspend fun unlike(id: Long) {
+        withContext(repositoryScope.coroutineContext) {
+            postSyncUtil.sync(apiRequest { postApi.like(id) })
         }
     }
 }

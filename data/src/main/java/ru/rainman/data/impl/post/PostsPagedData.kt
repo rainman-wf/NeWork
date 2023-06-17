@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.rainman.common.PAGINATION_LOAD_SIZE
 import ru.rainman.data.impl.toModel
 import ru.rainman.data.local.dao.PostDao
 import javax.inject.Inject
@@ -39,10 +40,10 @@ class PostsPagedData @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     val data = Pager(
         config = PagingConfig(
-            pageSize = 10,
-            prefetchDistance = 10,
+            pageSize = PAGINATION_LOAD_SIZE,
+            prefetchDistance = PAGINATION_LOAD_SIZE,
             enablePlaceholders = true,
-            maxSize = 30
+            maxSize = 3 * PAGINATION_LOAD_SIZE
         ),
         pagingSourceFactory = { postDao.getPaged() },
         remoteMediator = postRemoteMediator
@@ -53,10 +54,10 @@ class PostsPagedData @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     val wall = Pager(
         config = PagingConfig(
-            pageSize = 10,
-            prefetchDistance = 10,
+            pageSize = PAGINATION_LOAD_SIZE,
+            prefetchDistance = PAGINATION_LOAD_SIZE,
             enablePlaceholders = true,
-            maxSize = 30
+            maxSize = 3 * PAGINATION_LOAD_SIZE
         ),
         pagingSourceFactory = { postDao.getPagedWall(wallOwnerId) },
         remoteMediator = wallRemoteMediator

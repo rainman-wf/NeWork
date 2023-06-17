@@ -5,7 +5,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.util.TypedValue
 import android.widget.Toast
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -95,4 +98,11 @@ inline fun <reified T : Serializable> Bundle.getObject(key: String): T? {
     } else {
         getSerializable(key) as? T
     }
+}
+
+@ColorInt
+fun Context.getColorAttribute(@AttrRes attr: Int) :  Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(attr, typedValue, true)
+    return typedValue.data
 }

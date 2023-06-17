@@ -9,18 +9,16 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import ru.rainman.data.apiRequest
 import ru.rainman.data.impl.toEntity
 import ru.rainman.data.impl.toModel
-import ru.rainman.data.local.dao.JobDao
 import ru.rainman.data.local.dao.UserDao
 import ru.rainman.data.local.entity.FavoriteUserIdEntity
 import ru.rainman.data.local.pref.AppAuth
 import ru.rainman.data.remote.api.UserApi
-import ru.rainman.data.remote.apiRequest
 import ru.rainman.data.remote.request.AuthenticationRequest
 import ru.rainman.domain.dto.NewUserDto
 import ru.rainman.domain.model.ApiError
-import ru.rainman.domain.model.Job
 import ru.rainman.domain.model.Token
 import ru.rainman.domain.model.User
 import ru.rainman.domain.repository.UserRepository
@@ -32,7 +30,6 @@ class UserRepositoryImpl @Inject constructor(
     private val userApi: UserApi,
     private val appAuth: AppAuth,
     private val userDao: UserDao,
-    private val jobDao: JobDao,
     usersPagedData: UsersPagedData,
 ) : UserRepository {
 
@@ -41,6 +38,7 @@ class UserRepositoryImpl @Inject constructor(
 
     private val _authError = MutableSharedFlow<ApiError>()
     override val authError: Flow<ApiError> get() = _authError
+
     override val flowableUsers: Flow<List<User>> = userDao.getAll().map { list ->
         list.map { it.toModel() }
     }
@@ -55,7 +53,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun create(newObjectDto: NewUserDto): User? {
+    override suspend fun create(newObjectDto: NewUserDto) {
         val token = apiRequest {
             with(newObjectDto) {
                 userApi.register(
@@ -76,9 +74,8 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
         appAuth.putAuth(token)
-        return withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
+        withContext(repositoryScope.coroutineContext + Dispatchers.IO) {
             userDao.insert(apiRequest { userApi.getById(token.id) }.toEntity())
-            userDao.getById(token.id)?.toModel()
         }
     }
 
@@ -88,10 +85,6 @@ class UserRepositoryImpl @Inject constructor(
                 userDao.insert(apiRequest { userApi.getById(id) }.toEntity())
                 userDao.getById(id)?.toModel()
             }
-    }
-
-    override suspend fun getJobsById(userId: Long): List<Job> {
-        return jobDao.getJobByUserId(userId).map { it.toModel() }
     }
 
     override suspend fun getByIds(ids: List<Long>): List<User> {
@@ -106,7 +99,5 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun logOut() {
         appAuth.removeAuth()
     }
-
-
 }
 

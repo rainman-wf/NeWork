@@ -13,11 +13,6 @@
         android:title="@string/users" />
 
     <item
-        android:id="@+id/account"
-        android:icon="@drawable/person_selectable"
-        android:title="@string/account" />
-
-    <item
         android:id="@+id/wall"
         android:icon="@drawable/feed_selectable"
         android:title="@string/wall" />

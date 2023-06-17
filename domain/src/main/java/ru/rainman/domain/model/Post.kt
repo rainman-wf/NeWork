@@ -4,15 +4,15 @@ import java.time.LocalDateTime
 
 data class Post(
     override val id: Long,
-    val author: User,
-    val content: String,
-    val published: LocalDateTime,
-    val coordinates: Coordinates?,
-    val link: LinkPreview?,
-    val likeOwnerIds: List<User>,
+    override val author: User,
+    override val content: String,
+    override val published: LocalDateTime,
+    override val coordinates: Coordinates?,
+    override val link: LinkPreview?,
+    override val likeOwnerIds: List<User>,
     val mentioned: List<User>,
     val mentionedMe: Boolean,
-    val likedByMe: Boolean,
-    val attachment: Attachment?,
-    val ownedByMe: Boolean,
-) : BaseModel
+    override val likedByMe: Boolean,
+    override val attachment: Attachment?,
+    override val ownedByMe: Boolean,
+) : Publication

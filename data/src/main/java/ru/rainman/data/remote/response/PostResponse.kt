@@ -1,21 +1,22 @@
 package ru.rainman.data.remote.response
 
 import com.google.gson.annotations.SerializedName
-import ru.rainman.data.remote.response.Attachment
-import ru.rainman.data.remote.response.Coordinates
 
 data class PostResponse(
-    val id: Long,
-    val authorId: Long,
-    val content: String,
-    val published: String,
+    override val id: Long,
+    override val authorId: Long,
+    override val author: String,
+    override val authorAvatar: String?,
+    override val content: String,
+    override val published: String,
     @SerializedName("coords")
-    val coordinates: Coordinates?,
-    val link: String?,
-    val likeOwnerIds: List<Long>,
+    override val coordinates: Coordinates?,
+    override val link: String?,
+    override val likeOwnerIds: List<Long>,
     val mentionIds: List<Long>,
     val mentionedMe: Boolean,
-    val likedByMe: Boolean,
-    val attachment: Attachment?,
-    val ownedByMe: Boolean,
-)
+    override val likedByMe: Boolean,
+    override val attachment: Attachment?,
+    override val ownedByMe: Boolean,
+    override val users: Map<Long, UserPreviewResponse>,
+) : PublicationResponse

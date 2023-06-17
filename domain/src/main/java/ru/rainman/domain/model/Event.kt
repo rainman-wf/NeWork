@@ -4,18 +4,18 @@ import java.time.LocalDateTime
 
 data class Event(
     override val id: Long,
-    val author: User,
-    val content: String,
+    override val author: User,
+    override val content: String,
     val datetime: LocalDateTime,
-    val published: LocalDateTime,
-    val coordinates: Coordinates?,
+    override val published: LocalDateTime,
+    override val coordinates: Coordinates?,
     val type: EventType,
-    val likeOwnerIds: List<User>,
-    val likedByMe: Boolean,
+    override val likeOwnerIds: List<User>,
+    override val likedByMe: Boolean,
     val speakerIds: List<User>,
     val participantsIds: List<User>,
     val participatedByMe: Boolean,
-    val attachment: Attachment?,
-    val link: LinkPreview?,
-    val ownedByMe: Boolean
-) : BaseModel
+    override val attachment: Attachment?,
+    override val link: LinkPreview?,
+    override val ownedByMe: Boolean
+) : Publication

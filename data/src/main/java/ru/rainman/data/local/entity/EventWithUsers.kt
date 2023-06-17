@@ -8,25 +8,19 @@ import ru.rainman.data.local.entity.crossref.EventsParticipantsCrossRef
 import ru.rainman.data.local.entity.crossref.EventsSpeakersCrossRef
 
 data class EventWithUsers (
+
     @Embedded
     val eventEntity: EventEntity,
-    @Relation(
-        entity = UserEntity::class,
-        parentColumn = "author_id",
-        entityColumn = "user_id"
-    )
+
+    @Relation(entity = UserEntity::class, parentColumn = "author_id", entityColumn = "user_id")
     val author: UserWithJob,
-    @Relation(
-        entity = EventAttachmentEntity::class,
-        parentColumn = "event_id",
-        entityColumn = "event_id"
-    )
-    val attachment: EventAttachmentEntity?,
-    @Relation(
-        parentColumn = "event_id",
-        entityColumn = "event_id"
-    )
-    val linkPreview: EventLinkPreviewEntity?,
+
+    @Relation(parentColumn = "attachment_key", entityColumn = "key")
+    val attachment: AttachmentEntity?,
+
+    @Relation(parentColumn = "link_key", entityColumn = "key")
+    val linkPreview: LinkPreviewEntity?,
+
     @Relation(
         entity = UserEntity::class,
         parentColumn = "event_id",
@@ -34,6 +28,7 @@ data class EventWithUsers (
         associateBy = Junction(EventsLikeOwnersCrossRef::class)
     )
     val likeOwners: List<UserWithJob>,
+
     @Relation(
         entity = UserEntity::class,
         parentColumn = "event_id",
@@ -41,6 +36,7 @@ data class EventWithUsers (
         associateBy = Junction(EventsSpeakersCrossRef::class)
     )
     val speakers: List<UserWithJob>,
+
     @Relation(
         entity = UserEntity::class,
         parentColumn = "event_id",
