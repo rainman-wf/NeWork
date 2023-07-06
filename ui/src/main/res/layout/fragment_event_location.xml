@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.map.MapFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/maps_appbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/maps_toolbar"
+            style="?attr/appBarLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:navigationIcon="@drawable/back_24"
+            app:title="Event location">
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.yandex.mapkit.mapview.MapView
+        android:id="@+id/ya_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:background="@color/md_theme_dark_background" >
+    </com.yandex.mapkit.mapview.MapView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -49,6 +49,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
     implementation 'androidx.fragment:fragment-ktx:1.6.0'
+    implementation 'androidx.activity:activity-ktx:1.7.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.9'
 
@@ -60,12 +61,11 @@ dependencies {
     implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
 
     implementation 'com.google.dagger:hilt-android:2.46.1'
-    implementation 'androidx.core:core:1.10.1'
     kapt 'com.google.dagger:hilt-compiler:2.46.1'
 
-    implementation 'com.yandex.android:maps.mobile:4.3.1-full'
+    implementation 'com.yandex.android:maps.mobile:4.3.2-full'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
 

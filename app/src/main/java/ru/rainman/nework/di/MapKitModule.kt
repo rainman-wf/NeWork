@@ -13,6 +13,5 @@ import dagger.hilt.components.SingletonComponent
 object MapKitModule {
 
     @Provides
-    fun provideSearchManager() =
-        SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
+    fun provideSearchManager() = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
 }

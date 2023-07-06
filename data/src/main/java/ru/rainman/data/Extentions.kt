@@ -1,10 +1,12 @@
 package ru.rainman.data
 
+import com.google.gson.Gson
 import retrofit2.Response
-import ru.rainman.data.remote.response.EventResponse
+import ru.rainman.data.remote.response.ErrorBody
 import ru.rainman.domain.model.ApiError
 import ru.rainman.domain.model.DatabaseError
 import ru.rainman.domain.model.NetworkError
+import ru.rainman.domain.model.UndefinedError
 
 fun String?.isUrl(): Boolean {
     if (this == null) return false
@@ -16,12 +18,9 @@ fun String?.isUrl(): Boolean {
     return (!hasEmptyParts && domainParts.last().length > 1)
 }
 
-fun EventResponse.hasCorrectLink(): Boolean {
-    if (link == null) return false
-    val url =
-        if (!link.startsWith("http://") && !link.startsWith("https://")) "https://$link" else link
-
-    return url.isUrl()
+fun String?.formatLink(): String? {
+    if (this == null) return null
+    return if (!startsWith("http://") && !startsWith("https://")) "http://$this" else this
 }
 
 suspend fun <T> apiRequest(body: suspend () -> Response<T>): T {
@@ -30,9 +29,13 @@ suspend fun <T> apiRequest(body: suspend () -> Response<T>): T {
     } catch (e: Exception) {
         throw NetworkError(e.message.toString())
     }
-    if (!response.isSuccessful) throw ApiError(response.code(), response.message())
 
-    return response.body() ?: throw ApiError(response.code(), response.message())
+    if (response.body() == null && response.errorBody() == null) throw UndefinedError
+
+    return response.body() ?: throw ApiError(
+        response.code(),
+        Gson().fromJson(response.errorBody()!!.string(), ErrorBody::class.java).reason
+    )
 }
 
 suspend fun <T> dbQuery(query: suspend () -> T): T {

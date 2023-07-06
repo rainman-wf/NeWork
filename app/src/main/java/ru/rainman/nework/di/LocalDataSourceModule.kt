@@ -51,6 +51,11 @@ CREATE TRIGGER IF NOT EXISTS reset_link AFTER DELETE ON links
 BEGIN
 UPDATE posts SET link_key = NULL WHERE link_key = OLD.key;
 UPDATE events SET link_key = NULL WHERE link_key = OLD.key;
+UPDATE jobs SET link_key = NULL WHERE link_key = OLD.key;
+END;
+CREATE TRIGGER IF NOT EXISTS delete_job_links AFTER DELETE ON jobs
+BEGIN
+DELETE FROM links WHERE link_key = OLD.link_key;
 END;
 """
         )

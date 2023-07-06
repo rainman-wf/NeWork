@@ -4,15 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".PostsFragment">
+    tools:context=".fragments.publications.post.PostsFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/wall_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/wall_tool_bar"
+            style="?attr/appBarLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollEffect="compress"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:navigationIcon="@drawable/back_24"
+            app:menu="@menu/user_info"
+            app:subtitle="Subtitle"
+            app:subtitleCentered="true"
+            app:title="Tittle"
+            app:titleCentered="true">
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/post_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/card_post"
-        android:paddingVertical="8dp"
+        android:paddingVertical="4dp"
+        android:paddingHorizontal="8dp"
         android:clipToPadding="false"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

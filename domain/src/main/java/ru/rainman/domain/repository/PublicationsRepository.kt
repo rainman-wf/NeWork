@@ -7,6 +7,5 @@ interface PublicationsRepository<M : BaseModel, NO : NewObjectDto> : BaseReposit
 
     suspend fun delete(id: Long)
     suspend fun like(id: Long)
-    suspend fun unlike(id: Long)
 
 }

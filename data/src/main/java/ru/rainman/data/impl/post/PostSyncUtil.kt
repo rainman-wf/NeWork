@@ -4,12 +4,14 @@ import androidx.room.withTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.rainman.common.log
 import ru.rainman.data.dbQuery
+import ru.rainman.data.formatLink
 import ru.rainman.data.impl.AttachmentsUtil
 import ru.rainman.data.impl.fetchMentioned
 import ru.rainman.data.impl.fetchPostLikeOwners
 import ru.rainman.data.impl.toEntity
+import ru.rainman.data.impl.user.LinkPreviewUtil
+import ru.rainman.data.isUrl
 import ru.rainman.data.local.AppDb
 import ru.rainman.data.local.dao.PostDao
 import ru.rainman.data.local.entity.PostEntity
@@ -24,6 +26,7 @@ class PostSyncUtil @Inject constructor(
     private val postDao: PostDao,
     private val db: AppDb,
     private val attachmentsUtil: AttachmentsUtil,
+    private val linkPreviewUtil: LinkPreviewUtil
 ) {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -57,17 +60,16 @@ class PostSyncUtil @Inject constructor(
 
             val existedIds = existedPosts.map { it.id }
 
-            log(existedIds)
-
             val deletablePosts = existedIds.minus(responseIds.toSet())
             val existedLikes = postDao.getPostsLikeOwners(responseIds)
             val existedMentioned = postDao.getPostsMentioned(responseIds)
 
             val updatablePosts = newPosts.minus(existedPosts).map {
-                it.copy(attachmentKey = existedPosts.singleOrNull { entity -> entity.id == it.id }?.attachmentKey)
+                it.copy(
+                    attachmentKey = existedPosts.singleOrNull { entity -> entity.id == it.id }?.attachmentKey,
+                    linkKey = existedPosts.singleOrNull { entity -> entity.id == it.id }?.linkKey
+                )
             }
-
-            log(updatablePosts.map { it.id })
 
             val deletableLikes = existedLikes.minus(likeOwners.toSet())
             val deletableMentioned = existedMentioned.minus(mentioned.toSet())
@@ -81,10 +83,17 @@ class PostSyncUtil @Inject constructor(
                     postDao.upsertPosts(updatablePosts, likeOwners, mentioned)
                 }
             }
+            scope.launch {
+                response.filter { it.attachment != null && existedIds.contains(it.id) }.forEach {
 
-            response.filter { it.attachment != null && existedIds.contains(it.id) }.forEach {
-                scope.launch {
-                    syncAttachment(it, dbQuery { postDao.getPureEntityById(it.id)!! }.log())
+                    syncAttachment(it, dbQuery { postDao.getPureEntityById(it.id)!! })
+                }
+            }
+
+            scope.launch {
+                response.filter { existedIds.contains(it.id) }.forEach {
+
+                    syncLink(it, dbQuery { postDao.getPureEntityById(it.id)!! })
                 }
             }
 
@@ -123,18 +132,53 @@ class PostSyncUtil @Inject constructor(
                     postDao.deleteMentioned(deletableMentioned)
                     postDao.upsertPosts(
                         listOf(
-                            response.toEntity().copy(attachmentKey = existedPost.attachment?.key)
+                            response.toEntity().copy(
+                                attachmentKey = existedPost.attachment?.key,
+                                linkKey = existedPost.linkPreview?.key
+                            )
                         ), likeOwners, mentioned
                     )
                 }
             }
 
             scope.launch {
-                syncAttachment(response, dbQuery { postDao.getPureEntityById(response.id)!! }.log())
+                syncAttachment(response, dbQuery { postDao.getPureEntityById(response.id)!! })
+            }
+
+            scope.launch {
+                syncLink(response, dbQuery { postDao.getPureEntityById(response.id)!! })
             }
         }
     }
 
+    private suspend fun syncLink(postResponse: PostResponse, entity: PostEntity) {
+
+        val linkKey = entity.linkKey
+
+        when {
+            postResponse.link == null -> linkKey?.let { postDao.deleteLink(it) }
+            !postResponse.link.formatLink().isUrl() -> linkKey?.let { postDao.deleteLink(it) }
+            else ->
+                if (linkKey != null) {
+                    if (postDao.getLinkPreviewUrl(linkKey) != postResponse.link) {
+                        postDao.deleteLink(linkKey)
+                        linkPreviewUtil.getLinkPreviewEntity(postResponse)?.let {
+                            postDao.insertLinkPreview(
+                                postResponse.id,
+                                it
+                            )
+                        }
+                    }
+                } else {
+                    linkPreviewUtil.getLinkPreviewEntity(postResponse)?.let {
+                        postDao.insertLinkPreview(
+                            postResponse.id,
+                            it
+                        )
+                    }
+                }
+        }
+    }
 
     private suspend fun syncAttachment(postResponse: PostResponse, entity: PostEntity) {
 
@@ -148,9 +192,7 @@ class PostSyncUtil @Inject constructor(
 
             else ->
                 if (attachmentKey != null) {
-                    log("attachmentKey $attachmentKey")
                     if (postDao.getAttachmentUrl(attachmentKey) != postResponse.attachment.url) {
-                        log("replace attachment")
                         postDao.deleteAttachment(attachmentKey)
                         attachmentsUtil.getAttachmentEntityFrom(postResponse)?.let {
                             postDao.insertAttachment(
@@ -161,7 +203,6 @@ class PostSyncUtil @Inject constructor(
                     }
                 } else {
                     attachmentsUtil.getAttachmentEntityFrom(postResponse)?.let {
-                        log("insert new attachment")
                         postDao.insertAttachment(
                             postResponse.id,
                             it

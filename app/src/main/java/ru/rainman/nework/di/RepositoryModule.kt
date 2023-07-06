@@ -5,10 +5,12 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.rainman.data.impl.event.EventRepositoryImpl
+import ru.rainman.data.impl.job.JobRepositoryImpl
 import ru.rainman.data.impl.map.MapRepositoryImpl
 import ru.rainman.data.impl.post.PostRepositoryImpl
 import ru.rainman.data.impl.user.UserRepositoryImpl
 import ru.rainman.domain.repository.EventRepository
+import ru.rainman.domain.repository.JobRepository
 import ru.rainman.domain.repository.MapRepository
 import ru.rainman.domain.repository.PostRepository
 import ru.rainman.domain.repository.UserRepository
@@ -33,4 +35,9 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindUserRepository(impl: UserRepositoryImpl) : UserRepository
+
+
+    @Binds
+    @Singleton
+    fun bindJobRepository(impl: JobRepositoryImpl) : JobRepository
 }

@@ -5,16 +5,12 @@
         android:id="@+id/attachment"
         android:title="Attachment"
         android:icon="@drawable/attach"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:iconTint="?attr/colorOnSurface"/>
     <item
         android:id="@+id/mention"
         android:title="Attachment"
         android:icon="@drawable/mention"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/myLocation"
-        android:title="My Location"
-        android:checkable="true"
         app:showAsAction="always"
-        android:icon="@drawable/location_off"/>
+        android:iconTint="?attr/colorOnSurface"/>
 </menu>

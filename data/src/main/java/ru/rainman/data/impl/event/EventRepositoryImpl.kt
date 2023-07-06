@@ -81,26 +81,21 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun like(id: Long) {
         withContext(repositoryScope.coroutineContext) {
-            val event = listOf(apiRequest { eventApi.like(id) })
-            eventSyncUtil.sync(event, null)
-        }
-    }
-
-    override suspend fun unlike(id: Long) {
-        withContext(repositoryScope.coroutineContext) {
-            eventSyncUtil.sync(apiRequest { eventApi.like(id) })
+            eventDao.getPureEntityById(id)?.likedByMe?.let {
+                eventSyncUtil.sync(apiRequest {
+                    if (!it) eventApi.like(id) else eventApi.unlike(id)
+                })
+            }
         }
     }
 
     override suspend fun participate(id: Long) {
         withContext(repositoryScope.coroutineContext) {
-            eventSyncUtil.sync(apiRequest { eventApi.crateParticipant(id) })
-        }
-    }
-
-    override suspend fun leave(id: Long) {
-        return withContext(repositoryScope.coroutineContext) {
-            eventSyncUtil.sync(apiRequest { eventApi.deleteParticipant(id) })
+            eventDao.getPureEntityById(id)?.participatedByMe?.let {
+                eventSyncUtil.sync(apiRequest {
+                    if (!it) eventApi.crateParticipant(id) else eventApi.deleteParticipant(id)
+                })
+            }
         }
     }
 

@@ -33,8 +33,16 @@ interface PostDao : BaseDao<PostEntity> {
     @Query("SELECT url FROM attachments WHERE `key` = :key")
     suspend fun getAttachmentUrl(key: Long) : String?
 
+
+    @Query("SELECT url FROM links WHERE `key` = :key")
+    suspend fun getLinkPreviewUrl(key: Long) : String?
+
     @Query("DELETE FROM attachments WHERE `key` = :key")
     suspend fun deleteAttachment(key: Long)
+
+
+    @Query("DELETE FROM links WHERE `key` = :key")
+    suspend fun deleteLink(key: Long)
 
     @Upsert
     suspend fun upsertLinkPreview(link: LinkPreviewEntity) : Long
@@ -60,6 +68,7 @@ interface PostDao : BaseDao<PostEntity> {
     @Query("SELECT * FROM posts WHERE author_id = :userId ORDER BY post_id DESC")
     fun getPagedWall(userId: Long) : PagingSource<Int, PostWithUsers>
 
+    @Transaction
     @Query("SELECT * FROM posts WHERE post_id = :postId")
     suspend fun getById(postId: Long): PostWithUsers?
 

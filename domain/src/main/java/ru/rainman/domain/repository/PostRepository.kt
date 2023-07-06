@@ -7,7 +7,6 @@ import ru.rainman.domain.model.Post
 
 interface PostRepository: PublicationsRepository<Post, NewPostDto> {
 
-    val wall: Flow<PagingData<Post>>
+    fun wall (ownerId: Long): Flow<PagingData<Post>>
 
-    suspend fun defWallOwnerId(userId: Long)
 }

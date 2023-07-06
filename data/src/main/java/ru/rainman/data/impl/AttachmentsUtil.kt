@@ -1,13 +1,10 @@
 package ru.rainman.data.impl
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.rainman.common.log
 import ru.rainman.data.local.entity.AttachmentEntity
 import ru.rainman.data.local.entity.AttachmentType
@@ -21,6 +18,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 
 @Singleton
 class AttachmentsUtil @Inject constructor() {
@@ -61,11 +59,14 @@ class AttachmentsUtil @Inject constructor() {
         return weight / height
     }
 
-    private fun getVImageRatio(url: String): Float {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(url, options)
-        return options.outWidth.toFloat() / options.outHeight
+    private fun getVImageRatio(retriever: MediaMetadataRetriever): Float {
+        val weight =
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_IMAGE_WIDTH)?.toFloat()
+                ?: 16f
+        val height =
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_IMAGE_WIDTH)?.toFloat()
+                ?: 9f
+        return weight / height
     }
 
     private fun getArtist(retriever: MediaMetadataRetriever): String {
@@ -94,25 +95,20 @@ class AttachmentsUtil @Inject constructor() {
                 var title: String? = null
                 val type = AttachmentType.valueOf(attachmentResponse.type)
 
-                withContext(coroutineContext) {
+                CoroutineScope(coroutineContext).launch poll@{
+
                     val retriever = MediaMetadataRetriever()
 
-                    if (type != AttachmentType.IMAGE)
-                        try {
-                            retriever.setDataSource(attachmentResponse.url)
-                        } catch (e: RuntimeException) {
-                            log(e.message)
-                            return@withContext
-                        }
+
+                    try {
+                        retriever.setDataSource(attachmentResponse.url)
+                    } catch (e: RuntimeException) {
+                        log(e.message)
+                    }
 
                     when (type) {
                         AttachmentType.IMAGE -> {
-                            try {
-                                ratio = getVImageRatio(attachmentResponse.url)
-                            } catch (e: Exception) {
-                                log(e.message)
-                                return@withContext
-                            }
+                            ratio = getVImageRatio(retriever)
                         }
 
                         AttachmentType.VIDEO -> {
@@ -128,19 +124,20 @@ class AttachmentsUtil @Inject constructor() {
                     }
 
                     retriever.release()
+
+                    val attachment = AttachmentEntity(
+                        0,
+                        it.publicationResponse.attachment!!.url,
+                        type,
+                        duration,
+                        ratio,
+                        artist,
+                        title
+                    )
+
+
+                    it.result.invoke(attachment)
                 }
-                val attachment = AttachmentEntity(
-                    0,
-                    it.publicationResponse.attachment!!.url,
-                    type,
-                    duration,
-                    ratio,
-                    artist,
-                    title
-                ).log()
-
-
-                it.result.invoke(attachment)
             }
         }
     }

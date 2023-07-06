@@ -8,5 +8,5 @@ data class Job(
     val position: String,
     val start: LocalDateTime,
     val finish: LocalDateTime?,
-    val link: String?
+    val link: LinkPreview?
 ) : BaseModel

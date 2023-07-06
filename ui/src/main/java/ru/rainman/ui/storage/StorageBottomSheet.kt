@@ -6,7 +6,7 @@ import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.rainman.domain.model.Attachment
-import ru.rainman.ui.PagerAdapter
+import ru.rainman.ui.fragments.publications.PagerAdapter
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.BottomSheetStorageBinding
 import ru.rainman.ui.helperutils.PubType

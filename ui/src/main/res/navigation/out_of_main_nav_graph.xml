@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="ru.rainman.ui.MainFragment"
+        android:name="ru.rainman.ui.fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -24,10 +24,16 @@
         <action
             android:id="@+id/action_mainFragment_to_loginDialogFragment"
             app:destination="@id/loginDialogFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventEditorFragment"
-        android:name="ru.rainman.ui.EventEditorFragment"
+        android:name="ru.rainman.ui.fragments.publications.other.EventEditorFragment"
         android:label="fragment_event_editor"
         tools:layout="@layout/fragment_event_editor" >
         <action
@@ -43,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/postEditorFragment"
-        android:name="ru.rainman.ui.PostEditorFragment"
+        android:name="ru.rainman.ui.fragments.publications.other.PostEditorFragment"
         android:label="fragment_post_editor"
         tools:layout="@layout/fragment_post_editor" >
         <action
@@ -56,26 +62,37 @@
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"
-        android:name="ru.rainman.ui.RegistrationFragment"
+        android:name="ru.rainman.ui.fragments.auth.RegistrationFragment"
         android:label="fragment_registration"
         tools:layout="@layout/fragment_registration" />
     <fragment
         android:id="@+id/userInfoFragment"
-        android:name="ru.rainman.ui.UserInfoFragment"
+        android:name="ru.rainman.ui.fragments.users.UserInfoFragment"
         android:label="fragment_user_info"
-        tools:layout="@layout/fragment_user_info" />
+        tools:layout="@layout/fragment_user_info" >
+        <argument
+            android:name="user_id"
+            app:argType="long" />
+        <argument
+            android:name="isSettings"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
     <fragment
         android:id="@+id/postsFragment"
-        android:name="ru.rainman.ui.PostsFragment"
+        android:name="ru.rainman.ui.fragments.publications.post.PostsFragment"
         android:label="fragment_posts"
         tools:layout="@layout/fragment_posts" >
         <action
             android:id="@+id/action_postsFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
+        <argument
+            android:name="user_id"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="ru.rainman.ui.MapFragment"
+        android:name="ru.rainman.ui.fragments.map.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
         <argument
@@ -86,7 +103,7 @@
     </fragment>
     <dialog
         android:id="@+id/selectUsersDialogFragment"
-        android:name="ru.rainman.ui.SelectUsersDialogFragment"
+        android:name="ru.rainman.ui.fragments.users.SelectUsersDialogFragment"
         android:label="SelectUsersDialogFragment" >
         <argument
             android:name="ids"
@@ -97,7 +114,26 @@
     </dialog>
     <dialog
         android:id="@+id/loginDialogFragment"
-        android:name="ru.rainman.ui.LoginDialogFragment"
+        android:name="ru.rainman.ui.fragments.auth.LoginDialogFragment"
         android:label="dialog_fragment_login"
         tools:layout="@layout/dialog_fragment_login" />
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="ru.rainman.ui.fragments.publications.other.EventDetailsFragment"
+        android:label="EventDetailsFragment" >
+        <argument
+            android:name="event_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_eventLocationMapFragment"
+            app:destination="@id/eventLocationMapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventLocationMapFragment"
+        android:name="ru.rainman.ui.fragments.map.EventLocationMapFragment"
+        android:label="EventLocationMapFragment" >
+        <argument
+            android:name="point"
+            app:argType="ru.rainman.ui.helperutils.SimpleLocation" />
+    </fragment>
 </navigation>

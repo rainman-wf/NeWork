@@ -4,6 +4,13 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def properties = new Properties()
+def file = project.rootProject.file("private.properties")
+if (file.exists()) {
+    properties.load(file.newReader())
+}
+
+
 android {
     namespace 'ru.rainman.data'
     compileSdk 33
@@ -14,6 +21,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "MAPS_API_KEY", '"' + properties.getProperty("MAPS_API_KEY", " ") + '"'
     }
 
     buildTypes {
@@ -36,11 +45,11 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation project(path: ':common')
 
-    implementation "androidx.room:room-runtime:2.5.1"
-    implementation 'androidx.room:room-ktx:2.5.1'
-    kapt "androidx.room:room-compiler:2.5.1"
+    implementation 'androidx.room:room-runtime:2.5.2'
+    implementation 'androidx.room:room-ktx:2.5.2'
+    kapt 'androidx.room:room-compiler:2.5.2'
     implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
-    implementation 'androidx.room:room-paging:2.5.1'
+    implementation 'androidx.room:room-paging:2.5.2'
 
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
@@ -50,8 +59,6 @@ dependencies {
     implementation('com.google.dagger:dagger:2.46.1')
 
     implementation project(path: ':domain')
-    implementation 'org.jsoup:jsoup:1.16.1'
-
-    implementation 'com.yandex.android:maps.mobile:4.3.1-full'
+    implementation 'com.yandex.android:maps.mobile:4.3.2-full'
 
 }

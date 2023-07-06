@@ -7,29 +7,25 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="ru.rainman.ui.PagerFragment"
+        android:name="ru.rainman.ui.fragments.publications.PagerFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_pager" >
-        <argument
-            android:name="intention"
-            app:argType="ru.rainman.ui.helperutils.args.Args"
-            android:defaultValue="PUBLICATIONS" />
+        tools:layout="@layout/fragment_pager">
     </fragment>
     <fragment
         android:id="@+id/users"
-        android:name="ru.rainman.ui.PagerFragment"
+        android:name="ru.rainman.ui.fragments.users.UsersFragment"
         android:label="Users"
-        tools:layout="@layout/fragment_pager" >
-        <argument
-            android:name="intention"
-            app:argType="ru.rainman.ui.helperutils.args.Args"
-            android:defaultValue="USERS" />
-    </fragment>
+        tools:layout="@layout/fragment_users" />
     <fragment
         android:id="@+id/wall"
-        android:name="ru.rainman.ui.PostsFragment"
+        android:name="ru.rainman.ui.fragments.publications.post.PostsFragment"
         android:label="Wall"
-        tools:layout="@layout/fragment_posts" />
+        tools:layout="@layout/fragment_posts">
+        <argument
+            android:name="user_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
 
 
 </navigation>

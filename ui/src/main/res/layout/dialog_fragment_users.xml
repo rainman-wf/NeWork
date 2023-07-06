@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selectable_users"
+    style="?attr/materialAlertDialogTheme"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingVertical="2dp"
+    android:clipToPadding="false"
+    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:spanCount="2"
+    tools:listitem="@layout/card_user_preview_small" />

@@ -2,7 +2,6 @@ package ru.rainman.data.local.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.rainman.data.local.entity.FavoriteUserIdEntity
 import ru.rainman.data.local.entity.JobEntity
 import ru.rainman.data.local.entity.UserEntity
 import ru.rainman.data.local.entity.UserWithJob
@@ -35,11 +34,5 @@ interface UserDao : BaseDao<UserEntity> {
 
     @Query("SELECT user_id FROM users")
     suspend fun getIds(): List<Long>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setFavorite(userId: FavoriteUserIdEntity) : Long
-
-    @Delete
-    suspend fun resetFavorite(userId: FavoriteUserIdEntity) : Int
 
 }

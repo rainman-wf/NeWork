@@ -8,15 +8,9 @@ data class UserWithJob(
     val userEntity: UserEntity,
 
     @Relation(
-        parentColumn = "user_id",
-        entityColumn = "user_id",
-    )
-
-    val userIdEntity: FavoriteUserIdEntity?,
-
-    @Relation(
+        entity = JobEntity::class,
         parentColumn = "user_id",
         entityColumn = "employee_id"
     )
-    val jobs: List<JobEntity>
+    val jobs: List<JobWithLink>
 )

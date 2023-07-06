@@ -5,8 +5,7 @@ data class User(
     val name: String,
     val avatar: String?,
     val jobs: List<Job> = listOf(),
-    val favorite: Boolean,
 ): BaseModel {
 
-    val currentJob: Job? = jobs.singleOrNull { it.finish == null }
+    val currentJob: Job? get() = jobs.singleOrNull { it.finish == null }
 }

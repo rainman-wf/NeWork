@@ -10,3 +10,4 @@ fun <T : Any> T.log(): T {
     Log.d("my_app_log", "${this::class.simpleName} : $this")
     return this
 }
+

@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.rainman.common.EVENTS_REMOTE_KEYS
-import ru.rainman.common.POSTS_REMOTE_KEYS
 import ru.rainman.common.log
 import ru.rainman.data.apiRequest
 import ru.rainman.data.impl.user.UsersSyncUtil
@@ -24,10 +23,7 @@ import ru.rainman.data.local.entity.RemoteKeysEntity
 import ru.rainman.data.local.entity.UserEntity
 import ru.rainman.data.remote.api.EventApi
 import javax.inject.Inject
-
 import javax.inject.Singleton
-import kotlin.math.max
-import kotlin.math.min
 
 @OptIn(ExperimentalPagingApi::class)
 @Singleton
@@ -39,7 +35,6 @@ class EventsRemoteMediator @Inject constructor(
     private val userDao: UserDao,
     private val usersSyncUtil: UsersSyncUtil,
 ) : RemoteMediator<Int, EventWithUsers>() {
-
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var pageIdsRange: LongRange? = null
@@ -60,20 +55,47 @@ class EventsRemoteMediator @Inject constructor(
             when (loadType) {
                 REFRESH ->
                     remoteKeyDao.getMax(EVENTS_REMOTE_KEYS)
-                        ?.let { apiRequest { eventApi.getAfter(it, state.config.initialLoadSize) } }
-                        ?: apiRequest { eventApi.getLatest(state.config.initialLoadSize) }
+                        ?.let {
+                            apiRequest { eventApi.getAfter(it, state.config.initialLoadSize) }
+                                .plus(
+                                    apiRequest {
+                                        eventApi.getBefore(
+                                            it + 1,
+                                            state.config.initialLoadSize
+                                        )
+                                    }.also {
+                                        it.lastOrNull()?.let { last ->
+                                            it.firstOrNull()?.let { first ->
+                                                pageIdsRange = last.id..first.id
+                                            }
+                                        }
+                                    }
+                                )
+                        } ?: apiRequest { eventApi.getLatest(state.config.initialLoadSize) }
 
                 PREPEND -> remoteKeyDao.getMax(EVENTS_REMOTE_KEYS)
                     ?.let {
-                        pageIdsRange = (it..it + state.config.initialLoadSize)
                         apiRequest { eventApi.getAfter(it, state.config.initialLoadSize) }
+                            .also {
+                                it.lastOrNull()?.let { last ->
+                                    it.firstOrNull()?.let { first ->
+                                        pageIdsRange = last.id..first.id
+                                    }
+                                }
+                            }
                     }
                     ?: return MediatorResult.Success(false)
 
                 APPEND -> remoteKeyDao.getMin(EVENTS_REMOTE_KEYS)
                     ?.let {
-                        pageIdsRange = (it - state.config.initialLoadSize.toLong()..it)
                         apiRequest { eventApi.getBefore(it, state.config.initialLoadSize) }
+                            .also {
+                                it.lastOrNull()?.let { last ->
+                                    it.firstOrNull()?.let { first ->
+                                        pageIdsRange = last.id..first.id
+                                    }
+                                }
+                            }
                     }
                     ?: return MediatorResult.Success(false)
             }
@@ -82,8 +104,6 @@ class EventsRemoteMediator @Inject constructor(
             pageIdsRange = null
             return MediatorResult.Error(e)
         }
-
-        pageIdsRange?.log()
 
         if (response.isEmpty()) {
             pageIdsRange = null
@@ -112,9 +132,7 @@ class EventsRemoteMediator @Inject constructor(
         userDao.upsert(users.toList())
 
         scope.launch {
-            withContext(coroutineContext) {
-                usersSyncUtil.sync(users)
-            }
+            usersSyncUtil.sync(users)
         }
 
         appDb.withTransaction {
@@ -147,6 +165,7 @@ class EventsRemoteMediator @Inject constructor(
 //            }
         }
 
+        pageIdsRange = null
         return MediatorResult.Success(response.isEmpty())
     }
 

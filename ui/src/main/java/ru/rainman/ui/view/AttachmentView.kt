@@ -85,14 +85,7 @@ class AttachmentView(
         binding.image.isVisible = true
         binding.title.isVisible = false
         (attachment as Attachment.Image).let {
-            binding.image.updateLayoutParams<LayoutParams> {
-                dimensionRatio = it.ratio.toString()
-            }
-            Glide.with(binding.root.context)
-                .load(it.uri)
-                .placeholder(R.drawable.outline_ondemand_video_24)
-                .error(R.drawable.outline_ondemand_video_24)
-                .into(binding.image)
+            binding.image.loadBitmap(it.uri, R.drawable.image)
         }
         resetMediaMetadata()
     }
@@ -129,7 +122,7 @@ class AttachmentView(
         binding.title.isVisible = false
         (attachment as Attachment.Video).let {
             binding.image.updateLayoutParams<LayoutParams> {
-                dimensionRatio = it.ratio.toString()
+                dimensionRatio = min(max(it.ratio, minRatio), maxRatio).toString()
             }
             Glide.with(binding.root.context)
                 .load(it.uri)

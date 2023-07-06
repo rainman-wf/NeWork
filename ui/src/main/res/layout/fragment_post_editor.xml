@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".PostEditorFragment">
+    tools:context=".fragments.publications.other.PostEditorFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -22,13 +22,11 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:paddingBottom="100dp">
+        android:paddingBottom="100dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,16 +44,35 @@
                     android:id="@+id/input_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autoLink="web"
                     android:hint="@string/input_content"
+                    android:linksClickable="true"
                     tools:text="Some content" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <include
+                android:id="@+id/link"
+                layout="@layout/view_link_preview"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <ru.rainman.ui.view.AttachmentView
                 android:id="@+id/attachment_preview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/clear_attachment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="Clear Attachment"
+                app:icon="@drawable/delete_24"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mentioned_users_layout"
@@ -81,23 +98,23 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:backgroundTint="?attr/colorSecondaryContainer"
-        app:menuAlignmentMode="start"
         app:fabAlignmentMode="end"
         app:fabCradleVerticalOffset="14dp"
-        app:menu="@menu/post_editor_bar" />
+        app:menu="@menu/post_editor_bar"
+        app:menuAlignmentMode="start" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/bottom_bar"
         android:layout_margin="16dp"
         android:src="@drawable/done"
-        app:maxImageSize="32dp"/>
+        app:layout_anchor="@id/bottom_bar"
+        app:maxImageSize="32dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

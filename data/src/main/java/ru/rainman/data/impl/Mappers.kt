@@ -1,6 +1,7 @@
 package ru.rainman.data.impl
 
 import ru.rainman.common.toDateTime
+import ru.rainman.common.toLocalDateTime
 import ru.rainman.data.local.entity.*
 import ru.rainman.data.local.entity.crossref.*
 import ru.rainman.data.remote.request.EventCreateRequest
@@ -8,9 +9,11 @@ import ru.rainman.data.remote.request.PostCreateRequest
 import ru.rainman.data.remote.response.*
 import ru.rainman.data.remote.response.Coordinates
 import ru.rainman.domain.dto.NewEventDto
+import ru.rainman.domain.dto.NewJobDto
 import ru.rainman.domain.dto.NewPostDto
 import ru.rainman.domain.model.*
 import ru.rainman.domain.model.Attachment
+import java.time.LocalDateTime
 import ru.rainman.domain.model.Coordinates as CoordinatesModel
 import ru.rainman.data.remote.response.Attachment as AttachmentRequestBody
 
@@ -18,7 +21,9 @@ fun UserWithJob.toModel() = User(
     id = userEntity.userId,
     name = userEntity.name,
     avatar = userEntity.avatar,
-    favorite = userIdEntity?.userId == userEntity.userId
+    jobs = jobs.map {
+        it.toModel()
+    }
 )
 
 fun JobResponse.toEntity(userId: Long) = JobEntity(
@@ -28,8 +33,27 @@ fun JobResponse.toEntity(userId: Long) = JobEntity(
     position = position,
     start = start,
     finish = finish,
+)
+
+fun NewJobDto.toRequestBody() = JobResponse(
+    id = id,
+    name = name,
+    position = position,
+    start = start.toLocalDateTime().toString(),
+    finish = finish?.toLocalDateTime()?.toString(),
     link = link
 )
+
+fun JobWithLink.toModel() = Job(
+    id = job.id,
+    name = job.name,
+    position = job.position,
+    start = job.start.toDateTime(),
+    finish = job.finish?.toDateTime(),
+    link = linkPreview?.toModel(),
+)
+
+
 
 fun UserResponse.toEntity() = UserEntity(
     userId = id,
@@ -77,7 +101,12 @@ fun AttachmentEntity.toModel(): Attachment {
     return when (this.type) {
         AttachmentType.IMAGE -> Attachment.Image(url, 1.7f)
         AttachmentType.VIDEO -> Attachment.Video(url, duration!!, ratio!!)
-        AttachmentType.AUDIO -> Attachment.Audio(url, duration!!, artist!!, title!!)
+        AttachmentType.AUDIO -> Attachment.Audio(
+            url,
+            duration!!,
+            artist!!,
+            title!!
+        )
     }
 }
 

@@ -25,5 +25,6 @@ data class JobEntity(
     val position: String,
     val start: String,
     val finish: String?,
-    val link: String?,
+    @ColumnInfo(name = "link_key")
+    val link: Long? = null,
 )

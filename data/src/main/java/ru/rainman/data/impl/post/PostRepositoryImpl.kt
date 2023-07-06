@@ -36,11 +36,7 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     override val data: Flow<PagingData<Post>> = postsPagedData.data
-    override val wall: Flow<PagingData<Post>> = postsPagedData.wall
-
-    override suspend fun defWallOwnerId(userId: Long) {
-        postsPagedData.setWallOwnerId(userId)
-    }
+    override fun wall(ownerId: Long): Flow<PagingData<Post>> = postsPagedData.wall(ownerId)
 
     override suspend fun create(newObjectDto: NewPostDto) {
         val attachment = newObjectDto.attachment?.let { dto ->
@@ -85,13 +81,14 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun like(id: Long) {
         withContext(repositoryScope.coroutineContext) {
-           postSyncUtil.sync(apiRequest { postApi.like(id) })
+            postDao.getPureEntityById(id)?.likedByMe?.let {
+                postSyncUtil.sync(
+                    apiRequest {
+                        if (!it) postApi.like(id) else postApi.unlike(id)
+                    }
+                )
+            }
         }
     }
 
-    override suspend fun unlike(id: Long) {
-        withContext(repositoryScope.coroutineContext) {
-            postSyncUtil.sync(apiRequest { postApi.like(id) })
-        }
-    }
 }

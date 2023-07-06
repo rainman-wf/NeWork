@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    tools:context=".LoginDialogFragment">
+    tools:context=".fragments.auth.LoginDialogFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/login_input_login_layout"

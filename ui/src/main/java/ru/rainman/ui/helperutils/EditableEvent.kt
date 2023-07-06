@@ -9,7 +9,6 @@ import java.time.LocalDateTime
 
 data class EditableEvent(
     val id: Long = 0,
-    val content: String? = null,
     val dateTime: LocalDateTime,
     val coordinates: Coordinates? = null,
     val type: EventType = EventType.ONLINE,

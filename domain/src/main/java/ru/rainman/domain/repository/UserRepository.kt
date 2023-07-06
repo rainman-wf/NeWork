@@ -11,11 +11,9 @@ import ru.rainman.domain.model.User
 interface UserRepository : BaseRepository<User, NewUserDto> {
 
     val authToken: Flow<Token?>
-    val authError: Flow<ApiError>
     val flowableUsers: Flow<List<User>>
 
     suspend fun login(username: String, password: String)
-    suspend fun setFavorite(userId: Long, value: Boolean)
     suspend fun logOut()
-
+    suspend fun getJob(id: Long) : Job?
 }

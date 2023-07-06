@@ -32,7 +32,7 @@ object ApiModule {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL/*"http://45.12.75.147/"*/)
             .build()
             .create(MediaApi::class.java)
     }
@@ -91,5 +91,4 @@ object ApiModule {
             .build()
             .create(EventApi::class.java)
     }
-
 }

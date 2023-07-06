@@ -15,10 +15,10 @@ interface JobApi {
     suspend fun getAll() : Response<List<JobResponse>>
 
     @POST("my/jobs")
-    suspend fun create(@Body job: Job) : Response<JobResponse>
+    suspend fun create(@Body job: JobResponse) : Response<JobResponse>
 
-    @DELETE("my/jobs/job_id")
-    suspend fun delete(@Path("job_id") id: Long)
+    @DELETE("my/jobs/{job_id}")
+    suspend fun delete(@Path("job_id") id: Long) : Response<Unit>
 
     @GET("{user_id}/jobs")
     suspend fun getUserJobs(@Path("user_id") id: Long) : Response<List<JobResponse>>

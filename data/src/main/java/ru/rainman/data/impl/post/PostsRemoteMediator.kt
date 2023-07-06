@@ -10,7 +10,6 @@ import ru.rainman.common.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.rainman.common.POSTS_REMOTE_KEYS
 import ru.rainman.data.apiRequest
 import ru.rainman.data.impl.user.UsersSyncUtil
@@ -105,7 +104,6 @@ class PostsRemoteMediator @Inject constructor(
 
         if (response.isEmpty()) {
             pageIdsRange = null
-            log("empty response")
             return MediatorResult.Success(true)
         }
 
@@ -131,9 +129,7 @@ class PostsRemoteMediator @Inject constructor(
         userDao.upsert(users.toList())
 
         scope.launch {
-            withContext(coroutineContext) {
-                usersSyncUtil.sync(users)
-            }
+            usersSyncUtil.sync(users)
         }
 
         appDb.withTransaction {
@@ -149,22 +145,6 @@ class PostsRemoteMediator @Inject constructor(
             }
 
             postSyncUtil.sync(response, pageIdsRange)
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-
-//            withContext(coroutineContext) {
-//                response
-//                    .filter { it.link != null && it.link.startsWith("http") }
-//                    .forEach {
-//                        withContext(coroutineContext) {
-//                            postDao.insertLinkPreview(
-//                                it.id,
-//                                LinkPreviewBuilder.poll(it.link!!).toEntity()
-//                            )
-//                        }
-//                    }
-//            }
         }
 
         pageIdsRange = null

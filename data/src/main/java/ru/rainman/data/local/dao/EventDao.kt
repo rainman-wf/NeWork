@@ -13,6 +13,12 @@ import ru.rainman.data.local.utils.PublicationUsersDiff
 @Dao
 interface EventDao : BaseDao<EventEntity> {
 
+    @Query("DELETE FROM links WHERE `key` = :key")
+    suspend fun deleteLink(key: Long)
+
+    @Query("SELECT url FROM links WHERE `key` = :key")
+    suspend fun getLinkPreviewUrl(key: Long) : String?
+
     @Upsert
     suspend fun upsertAttachment(attachment: AttachmentEntity) : Long
 
@@ -24,6 +30,9 @@ interface EventDao : BaseDao<EventEntity> {
         val generatedKey = upsertAttachment(attachment)
         setAttachment(generatedKey, eventId)
     }
+
+    @Query("SELECT * FROM events WHERE event_id IN (:evenIds)")
+    suspend fun getEventsByIds(evenIds: List<Long>) : List<EventEntity>
 
     @Upsert
     suspend fun upsertLinkPreview(link: LinkPreviewEntity) : Long

@@ -4,6 +4,7 @@ import androidx.paging.PagingState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import ru.rainman.data.apiRequest
 import ru.rainman.data.impl.CustomPagingSource
 import ru.rainman.data.impl.toEntity
@@ -27,12 +28,13 @@ class UserPagingSource(
         val nextPageNumber = params.key ?: 0
         val users = userDao.getSized(nextPageNumber, params.loadSize)
 
-        CoroutineScope(Dispatchers.IO).async {
+        CoroutineScope(Dispatchers.IO).launch {
             users.forEach { user ->
                 val jobs = apiRequest { jobApi.getUserJobs(user.userEntity.userId) }.map { it.toEntity(user.userEntity.userId) }
                 if (jobs.isNotEmpty()) jobDao.insert(jobs)
             }
         }
+
         return result(users, nextPageNumber, params.loadSize) {
             it.toModel()
         }
