@@ -7,10 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import ru.rainman.common.log
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.FragmentUserInfoBinding
 import ru.rainman.ui.helperutils.getNavController
@@ -23,12 +23,16 @@ import ru.rainman.ui.helperutils.states.Success
 class UserInfoFragment : Fragment(R.layout.fragment_user_info) {
 
     private val viewModel: UserInfoViewModel by viewModels()
-    private val binding: FragmentUserInfoBinding by viewBinding(FragmentUserInfoBinding::bind)
+    lateinit var binding: FragmentUserInfoBinding
     private val args: UserInfoFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val isSettings = args.isSettings
+
+        binding = FragmentUserInfoBinding.bind(view)
+
+        log(isSettings)
 
         binding.add.isVisible = isSettings
 

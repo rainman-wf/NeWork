@@ -1,6 +1,5 @@
 package ru.rainman.ui.fragments.users
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View

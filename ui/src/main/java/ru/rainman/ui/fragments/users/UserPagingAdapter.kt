@@ -6,21 +6,21 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.rainman.common.log
 import ru.rainman.domain.model.User
 import ru.rainman.ui.R
-import ru.rainman.ui.databinding.CardUserPreviewBaseBinding
+import ru.rainman.ui.databinding.CardUserBinding
 
 
-class UserPagingAdapter : PagingDataAdapter<User, UserPagingAdapter.UserViewHolder>(UserDiff()) {
+class UserPagingAdapter(
+    private val onClick: (Long) -> Unit
+) : PagingDataAdapter<User, UserPagingAdapter.UserViewHolder>(UserDiff()) {
 
-    inner class UserViewHolder(private val binding: CardUserPreviewBaseBinding) :
+    inner class UserViewHolder(private val binding: CardUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User) {
 
             with(binding) {
                 name.text = user.name
-                log(user.jobs)
                 user.currentJob?.let { job.text = it.name }
                 user.avatar?.let {
                     Glide.with(binding.root)
@@ -31,6 +31,7 @@ class UserPagingAdapter : PagingDataAdapter<User, UserPagingAdapter.UserViewHold
                         .into(avatar)
                 } ?: Glide.with(binding.root.context).load(R.drawable.avatar_empty).into(avatar)
 
+                root.setOnClickListener { onClick(user.id) }
             }
         }
     }
@@ -51,7 +52,7 @@ class UserPagingAdapter : PagingDataAdapter<User, UserPagingAdapter.UserViewHold
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         return UserViewHolder(
-            CardUserPreviewBaseBinding.inflate(
+            CardUserBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

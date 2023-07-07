@@ -1,8 +1,12 @@
 package ru.rainman.ui.fragments.publications.other
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.util.Linkify
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -17,7 +21,6 @@ import ru.rainman.ui.databinding.FragmentPostEditorBinding
 import ru.rainman.ui.helperutils.PubType
 import ru.rainman.ui.helperutils.args.ArgKey
 import ru.rainman.ui.helperutils.args.RequestKey
-import ru.rainman.ui.helperutils.args.putString
 import ru.rainman.ui.helperutils.args.setResultListener
 import ru.rainman.ui.helperutils.getNavController
 import ru.rainman.ui.helperutils.getObject
@@ -26,8 +29,8 @@ import ru.rainman.ui.helperutils.snack
 import ru.rainman.ui.helperutils.states.Error
 import ru.rainman.ui.helperutils.states.Loading
 import ru.rainman.ui.helperutils.states.Success
-import ru.rainman.ui.storage.StorageBottomSheet
 import ru.rainman.ui.view.SpeakerChip
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class PostEditorFragment : Fragment(R.layout.fragment_post_editor) {
@@ -36,6 +39,27 @@ class PostEditorFragment : Fragment(R.layout.fragment_post_editor) {
     private val viewModel: PostEditorViewModel by viewModels()
     private lateinit var navController: NavController
     private val args: PostEditorFragmentArgs by navArgs()
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            showStorageDialog(PubType.POST)
+        }
+
+    private var storagePermissionGranted by Delegates.notNull<Boolean>()
+
+    private fun requestPermission() {
+        if (!storagePermissionGranted)
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        storagePermissionGranted = ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -113,11 +137,7 @@ class PostEditorFragment : Fragment(R.layout.fragment_post_editor) {
         binding.bottomBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.attachment -> {
-                    val bundle = Bundle()
-                    bundle.putString(ArgKey.ATTACHMENT, PubType.POST.name)
-                    val dialog = StorageBottomSheet()
-                    dialog.arguments = bundle
-                    dialog.show(parentFragmentManager, "STORAGE")
+                    if (storagePermissionGranted) showStorageDialog(PubType.POST) else requestPermission()
                     true
                 }
 

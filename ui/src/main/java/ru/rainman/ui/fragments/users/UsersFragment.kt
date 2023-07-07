@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.rainman.ui.R
 import ru.rainman.ui.databinding.FragmentUsersBinding
+import ru.rainman.ui.fragments.MainFragmentDirections
+import ru.rainman.ui.helperutils.activityFragmentManager
+import ru.rainman.ui.helperutils.getNavController
 
 @AndroidEntryPoint
 class UsersFragment : Fragment(R.layout.fragment_users) {
@@ -23,7 +26,10 @@ class UsersFragment : Fragment(R.layout.fragment_users) {
 
         val binding = FragmentUsersBinding.bind(view)
 
-        val adapter = UserPagingAdapter()
+        val adapter = UserPagingAdapter {
+            activityFragmentManager().getNavController(R.id.out_of_main_nav_host)
+                .navigate(MainFragmentDirections.actionMainFragmentToPostsFragment(it))
+        }
 
         binding.users.adapter = adapter
 

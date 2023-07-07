@@ -1,9 +1,13 @@
 package ru.rainman.ui.fragments.auth
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,18 +24,43 @@ import ru.rainman.ui.helperutils.states.Error
 import ru.rainman.ui.helperutils.states.Loading
 import ru.rainman.ui.helperutils.states.Success
 import ru.rainman.ui.helperutils.toUploadMedia
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
     private val viewModel: RegistrationViewModel by viewModels()
+    private lateinit var binding: FragmentRegistrationBinding
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            SelectAvatarBottomSheetDialog().show(parentFragmentManager, "AVATAR")
+        }
+
+    private var storagePermissionGranted by Delegates.notNull<Boolean>()
+
+    private fun requestPermission() {
+        if (!storagePermissionGranted)
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        storagePermissionGranted = ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val binding = FragmentRegistrationBinding.bind(view)
+        binding = FragmentRegistrationBinding.bind(view)
 
         binding.registrationPickImage.setOnClickListener {
-            SelectAvatarBottomSheetDialog().show(parentFragmentManager, "AVATAR")
+            if (storagePermissionGranted)
+                SelectAvatarBottomSheetDialog().show(parentFragmentManager, "AVATAR")
+            else requestPermission()
         }
 
         setFragmentResultListener("REGISTRATION_AVATAR") { _, bundle ->

@@ -1,7 +1,11 @@
 package ru.rainman.ui.fragments.publications.other
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -30,6 +34,7 @@ import ru.rainman.ui.helperutils.states.Success
 import ru.rainman.ui.storage.StorageBottomSheet
 import ru.rainman.ui.view.SpeakerChip
 import java.time.format.DateTimeFormatter
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
@@ -47,6 +52,27 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
     private val timePicker =
         MaterialTimePicker.Builder().setTitleText("Set time").setTimeFormat(TimeFormat.CLOCK_24H)
             .build()
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            showStorageDialog(PubType.EVENT)
+        }
+
+    private var storagePermissionGranted by Delegates.notNull<Boolean>()
+
+    private fun requestPermission() {
+        if (!storagePermissionGranted)
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        storagePermissionGranted = ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -116,12 +142,9 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
                 binding.addEventAttachment.text = "Add Attachment"
                 binding.addEventAttachment.icon = ResourcesCompat.getDrawable(requireContext().resources, R.drawable.add, null)
                 binding.attachmentPreview.recycle()
+
                 binding.addEventAttachment.setOnClickListener {
-                    val dialog = StorageBottomSheet()
-                    val bundle = Bundle()
-                    bundle.putString(ArgKey.ATTACHMENT, PubType.EVENT.name)
-                    dialog.arguments = bundle
-                    dialog.show(parentFragmentManager, "STORAGE")
+                    if (storagePermissionGranted) showStorageDialog(PubType.EVENT) else requestPermission()
                 }
             }
         }
@@ -183,6 +206,14 @@ class EventEditorFragment : Fragment(R.layout.fragment_event_editor) {
         }
 
     }
+}
+
+fun Fragment.showStorageDialog(pubType: PubType) {
+    val dialog = StorageBottomSheet()
+    val bundle = Bundle()
+    bundle.putString(ArgKey.ATTACHMENT, pubType.name)
+    dialog.arguments = bundle
+    dialog.show(parentFragmentManager, "STORAGE")
 }
 
 

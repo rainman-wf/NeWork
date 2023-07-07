@@ -46,7 +46,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 Glide.with(requireContext())
                     .asDrawable()
                     .load(avatar)
-                    .override(40,40)
+                    .override(40, 40)
                     .error(R.drawable.avatar_error)
                     .circleCrop()
                     .into(object : CustomTarget<Drawable>() {
@@ -67,7 +67,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
             } ?: Glide.with(requireContext())
                 .asDrawable()
-                .override(40    ,40)
+                .override(40, 40)
                 .load(R.drawable.avatar_stub)
                 .circleCrop()
                 .into(object : CustomTarget<Drawable>() {
@@ -89,8 +89,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         binding.mainToolBar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.reg -> menuItemHandle { parentNav.navigate(MainFragmentDirections.actionMainFragmentToRegistrationFragment()) }
-                R.id.login -> menuItemHandle { parentNav.navigate(MainFragmentDirections.actionMainFragmentToLoginDialogFragment()) }
+                R.id.reg -> {
+                    parentNav.navigate(MainFragmentDirections.actionMainFragmentToRegistrationFragment())
+                    true
+                }
+
+                R.id.login -> {
+                    parentNav.navigate(MainFragmentDirections.actionMainFragmentToLoginDialogFragment())
+                    true
+                }
+
                 R.id.logout -> menuItemHandle { viewModel.logOut() }
                 R.id.settings -> {
                     viewModel.me.value?.token?.id?.let { id ->
@@ -100,6 +108,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     }
                     true
                 }
+
                 else -> false
             }
         }
