@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.navArgs
+import androidx.paging.LoadState
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -149,12 +150,16 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         lifecycleScope.launch {
             when (arg) {
                 -1L -> viewModel.posts.collectLatest {
+
                     adapter.submitData(it)
                 }
                 else -> viewModel.wall(arg).collectLatest { data ->
                     adapter.submitData(data)
                 }
             }
+
+            
         }
+
     }
 }

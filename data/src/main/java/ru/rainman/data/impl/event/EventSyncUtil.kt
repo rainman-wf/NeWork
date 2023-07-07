@@ -67,13 +67,13 @@ class EventSyncUtil @Inject constructor(
 
             response.filter { it.attachment != null }.forEach {
                 scope.launch {
-                    syncAttachment(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
+                    syncAttachment(it, it.toEntity() )
                 }
             }
 
             scope.launch {
                 response.filter { it.link != null }.forEach {
-                    syncLink(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
+                    syncLink(it, it.toEntity())
                 }
             }
         } else {
@@ -112,15 +112,15 @@ class EventSyncUtil @Inject constructor(
             }
 
 
-            scope.launch {
-                response.filter { existedIds.contains(it.id) }.forEach {
-                    syncAttachment(it, it.toEntity())
+                scope.launch {
+                    response.filter { existedIds.contains(it.id) }.forEach {
+                    syncAttachment(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
                 }
             }
 
             scope.launch {
                 response.filter { existedIds.contains(it.id) }.forEach {
-                    syncLink(it, it.toEntity())
+                    syncLink(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
                 }
             }
 

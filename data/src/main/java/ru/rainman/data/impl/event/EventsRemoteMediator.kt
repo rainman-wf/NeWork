@@ -44,7 +44,6 @@ class EventsRemoteMediator @Inject constructor(
         }
     }
 
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, EventWithUsers>
