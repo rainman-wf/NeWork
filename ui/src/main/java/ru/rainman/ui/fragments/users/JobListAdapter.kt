@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.rainman.domain.model.Job
 import ru.rainman.ui.databinding.CardJobItemBinding
 import ru.rainman.ui.helperutils.represent
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class JobListAdapter : ListAdapter<Job, JobListAdapter.ViewHolder>(Diff()) {
 
@@ -20,11 +22,16 @@ class JobListAdapter : ListAdapter<Job, JobListAdapter.ViewHolder>(Diff()) {
 
                 title.text = job.name
                 position.text = job.position
-                dates.text = "From ${job.start} to present"
+                dates.text = dates(job.start.toLocalDate(), job.finish?.toLocalDate())
                 link.root.isVisible = job.link != null
                 job.link?.let { link.represent(it) }
             }
 
+        }
+
+        private fun dates(start: LocalDate, finish: LocalDate?) : String {
+            return "From ${start.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))} to ${
+                finish?.format(DateTimeFormatter.ofPattern("dd MMM yyyy")) ?: "present day"}"
         }
     }
 
