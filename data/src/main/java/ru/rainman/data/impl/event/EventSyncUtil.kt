@@ -4,7 +4,6 @@ import androidx.room.withTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.rainman.common.log
 import ru.rainman.data.dbQuery
 import ru.rainman.data.formatLink
 import ru.rainman.data.impl.AttachmentsUtil
@@ -17,12 +16,10 @@ import ru.rainman.data.isUrl
 import ru.rainman.data.local.AppDb
 import ru.rainman.data.local.dao.EventDao
 import ru.rainman.data.local.entity.EventEntity
-import ru.rainman.data.local.entity.PostEntity
 import ru.rainman.data.local.entity.crossref.EventsLikeOwnersCrossRef
 import ru.rainman.data.local.entity.crossref.EventsParticipantsCrossRef
 import ru.rainman.data.local.entity.crossref.EventsSpeakersCrossRef
 import ru.rainman.data.remote.response.EventResponse
-import ru.rainman.data.remote.response.PostResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,6 +64,18 @@ class EventSyncUtil @Inject constructor(
                         }
                     }
                 }
+
+            response.filter { it.attachment != null }.forEach {
+                scope.launch {
+                    syncAttachment(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
+                }
+            }
+
+            scope.launch {
+                response.filter { it.link != null }.forEach {
+                    syncLink(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
+                }
+            }
         } else {
 
             val existedIds = existEvents.map { it.id }
@@ -102,15 +111,16 @@ class EventSyncUtil @Inject constructor(
                 }
             }
 
-            response.filter { it.attachment != null && existedIds.contains(it.id) }.forEach {
-                scope.launch {
-                    syncAttachment(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
+
+            scope.launch {
+                response.filter { existedIds.contains(it.id) }.forEach {
+                    syncAttachment(it, it.toEntity())
                 }
             }
 
             scope.launch {
                 response.filter { existedIds.contains(it.id) }.forEach {
-                    syncLink(it, dbQuery { eventDao.getPureEntityById(it.id)!! })
+                    syncLink(it, it.toEntity())
                 }
             }
 

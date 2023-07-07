@@ -47,6 +47,8 @@ class EventsFragment : Fragment(R.layout.fragment_events) {
             }
         }
 
+        binding.eventList.itemAnimator = null
+
         val adapter =
             EventListAdapter(PlayerHolder.currentPlayedItem, object : OnEventClickListener {
                 override fun onLikeClicked(id: Long) {

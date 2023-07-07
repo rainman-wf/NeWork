@@ -56,6 +56,18 @@ class PostSyncUtil @Inject constructor(
                         }
                     }
                 }
+
+            scope.launch {
+                response.filter { it.attachment != null }.forEach {
+                    syncAttachment(it, it.toEntity() )
+                }
+            }
+
+            scope.launch {
+                response.filter { it.link != null }.forEach {
+                    syncLink(it, it.toEntity() )
+                }
+            }
         } else {
 
             val existedIds = existedPosts.map { it.id }
@@ -84,7 +96,7 @@ class PostSyncUtil @Inject constructor(
                 }
             }
             scope.launch {
-                response.filter { it.attachment != null && existedIds.contains(it.id) }.forEach {
+                response.filter { existedIds.contains(it.id) }.forEach {
 
                     syncAttachment(it, dbQuery { postDao.getPureEntityById(it.id)!! })
                 }

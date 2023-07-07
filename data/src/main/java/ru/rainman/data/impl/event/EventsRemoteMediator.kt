@@ -9,7 +9,6 @@ import androidx.room.withTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.rainman.common.EVENTS_REMOTE_KEYS
 import ru.rainman.common.log
 import ru.rainman.data.apiRequest
@@ -107,7 +106,7 @@ class EventsRemoteMediator @Inject constructor(
 
         if (response.isEmpty()) {
             pageIdsRange = null
-            return MediatorResult.Success(false)
+            return MediatorResult.Success(true )
         }
 
         val maxId = response.first().id
@@ -147,22 +146,6 @@ class EventsRemoteMediator @Inject constructor(
             }
 
             eventSyncUtil.sync(response, pageIdsRange)
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-
-//            withContext(coroutineContext) {
-//                response
-//                    .filter { it.link != null && it.link.startsWith("http") }
-//                    .forEach {
-//                        withContext(coroutineContext) {
-//                            postDao.insertLinkPreview(
-//                                it.id,
-//                                LinkPreviewBuilder.poll(it.link!!).toEntity()
-//                            )
-//                        }
-//                    }
-//            }
         }
 
         pageIdsRange = null
